@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import {UserModel,LinkModel,ContentModel} from "./db";
 import jwt from "jsonwebtoken"
 import cors from "cors";
+import { JWT_PASSWORD } from "./config";
 
 
 const app = express();
@@ -33,8 +34,27 @@ app.post("/api/v1/signup",async(req,res) => {
 
 
     
-app.post("/api/v1/signin",(req,res) => {
+app.post("/api/v1/signin",async(req,res) => {
+    const username = req.body.username;
+    const password = req.body.password;
 
+    const ExistingUser = await UserModel.findOne({
+        username:username,
+        password:password
+    })
+    if(!ExistingUser){
+        res.status(403).json({
+            message:"Invalid credentials"
+        });
+    } else {
+        const token = jwt.sign({
+            id: ExistingUser._id
+        }, JWT_PASSWORD);
+        res.status(200).json({
+            message: "Sign-in successful",
+            token: token
+        });
+    }
 
 })
 app.post("/api/v1/content",(req,res) => {

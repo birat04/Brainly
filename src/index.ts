@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken"
 import cors from "cors";
 import { JWT_PASSWORD } from "./config";
 import { userMiddleware } from "./middleware";
-
+import { Request,Response,NextFunction } from "express";
 
 const app = express();
 app.use(express.json());
@@ -58,7 +58,26 @@ app.post("/api/v1/signin",async(req,res) => {
     }
 
 })
-app.post("/api/v1/content",userMiddleware,async(req,res) => {
+
+const authMiddleware = (req:Request, res: Response, next: NextFunction) => {
+    const token = req.headers.authorization?.split("")[1];
+    if(!token){
+        res.status(401).json({
+            message: "Unauthorized"
+        });
+        return;
+    }
+    try{
+        const decoded = jwt.verify(token,JWT_PASSWORD) as {id: string};
+        req.userId = decoded.id;
+        next();
+    } catch(err){
+        res.status(401).json({
+            message:"Forbidden"
+        })
+    }
+}
+app.post("/api/v1/content",authMiddleware,async(req,res) => {
     const link = req.body.link;
     const type = req.body.type;
     await ContentModel.create({
@@ -73,7 +92,7 @@ app.post("/api/v1/content",userMiddleware,async(req,res) => {
     })
 
 })
-app.get("/api/v1/content",userMiddleware,async(req,res) => {
+app.get("/api/v1/content",authMiddleware,async(req,res) => {
     const userId = req.userId;
     const content = await ContentModel.find({
         userId: userId
@@ -83,7 +102,7 @@ app.get("/api/v1/content",userMiddleware,async(req,res) => {
     })
 
 })
-app.delete("/api/v1/content",userMiddleware,async(req,res) => {
+app.delete("/api/v1/content",authMiddleware,async(req,res) => {
     const contentId = req.body.contentId;
     await ContentModel.deleteMany({
         contentId: contentId,
@@ -96,7 +115,7 @@ app.delete("/api/v1/content",userMiddleware,async(req,res) => {
 
 
 })
-app.post("/api/v1/brain/share",userMiddleware,async(req,res) => {
+app.post("/api/v1/brain/share",authMiddleware,async(req,res) => {
     const share = req.body.share;
     if(share){
         const existingLink = await LinkModel.findOne({
@@ -108,7 +127,7 @@ app.post("/api/v1/brain/share",userMiddleware,async(req,res) => {
             })
             return;
         }
-        const hash = random(10);
+        const hash = Math.random().toString(36).substring(2, 12);
         await LinkModel.create({
             hash: hash,
         })

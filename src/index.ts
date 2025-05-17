@@ -156,8 +156,28 @@ app.get("/api/v1/brain/:shareLink",async(req,res) => {
         })
         return;
     }
+    const content = await ContentModel.find({
+        userId: Link.userId
+    })
+    console.log(Link);
+    const user = await UserModel.findOne({
+        _id: Link.userId
+    })
+    if(!user){
+        res.status(404).json({
+            message: "User not found, please try again"
+        })
+    }
+    res.json({
+        username: user?.username,
+        content: content
+    })
+
+})
+app.listen(5000, () => {
+    console.log("Server started on port 5000");
+})
         
     
 
-})
 

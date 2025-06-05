@@ -60,7 +60,7 @@ app.post("/api/v1/signin",async(req,res) => {
 })
 
 const authMiddleware = (req:Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization?.split("")[1];
+    const token = req.headers.authorization?.split(" ")[1];
     if(!token){
         res.status(401).json({
             message: "Unauthorized"
@@ -174,8 +174,8 @@ app.get("/api/v1/brain/:shareLink",async(req,res) => {
     })
 
 })
-app.listen(5000, () => {
-    console.log("Server started on port 5000");
+app.listen(3000, () => {
+    console.log("Server started on port 3000");
 })
         
     

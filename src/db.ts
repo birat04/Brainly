@@ -1,48 +1,52 @@
 import mongoose from "mongoose";
 
-mongoose.connect("mongodb://localhost:27017/brainly").then(() => {
-    console.log("Connected to MongoDB");
-}).catch((err) => {
-    console.error("Failed to connect to MongoDB", err);
-});
+mongoose.connect("mongodb://localhost:27017/brainly")
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch((err) => console.error("❌ Failed to connect to MongoDB", err));
+
 const { Schema } = mongoose;
 
 const UserSchema = new Schema({
-    username: {
-        type: String,
-        unique: true,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
-    }
-});
+  username: {
+    type: String,
+    unique: true,
+    required: true
+  },
+  password: { 
+    type: String,
+    required: true
+  }
+}, { timestamps: true });
 
 export const UserModel = mongoose.model("User", UserSchema);
 
 const ContentSchema = new Schema({
-    title: String,
-    content: String,
-    tags: [{ type: mongoose.Types.ObjectId, ref: "Tag" }],
-    type: String,
-    userId: {
-        type: mongoose.Types.ObjectId,
-        ref: "User",
-        required: true
-    }
-});
+  title: { type: String, required: true },
+  content: { type: String, default: "" }, 
+  link: { type: String, required: true }, 
+  type: { type: String, required: true }, 
+  tags: [{ type: String }],
+  userId: {
+    type: mongoose.Types.ObjectId,
+    ref: "User",
+    required: true
+  }
+}, { timestamps: true });
 
 export const ContentModel = mongoose.model("Content", ContentSchema);
 
 const LinkSchema = new Schema({
-    hash: String,
-    userId: {
-        type: mongoose.Types.ObjectId,
-        ref: "User",
-        required: true,
-        unique: true
-    }
-});
+  hash: {
+    type: String,
+    unique: true,
+    required: true
+  },
+  userId: {
+    type: mongoose.Types.ObjectId,
+    ref: "User",
+    required: true,
+    unique: true
+  }
+}, { timestamps: true });
 
 export const LinkModel = mongoose.model("Link", LinkSchema);

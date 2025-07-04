@@ -1,8 +1,17 @@
 import mongoose from "mongoose";
 
-mongoose.connect("mongodb://localhost:27017/brainly")
-  .then(() => console.log("✅ Connected to MongoDB"))
-  .catch((err) => console.error("❌ Failed to connect to MongoDB", err));
+
+const connectDB = async (): Promise<void> => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URI!);
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error('❌ MongoDB connection failed:', error);
+    process.exit(1);
+  }
+};
+
+export default connectDB;
 
 const { Schema } = mongoose;
 

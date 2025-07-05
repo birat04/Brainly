@@ -1,8 +1,8 @@
 version: "3.8"
 
 services:
-  api:
-    build: .
+  backend:
+    build: ./backend
     ports:
       - "3000:3000"
     environment:
@@ -10,6 +10,13 @@ services:
       - JWT_PASSWORD=birat@059
     depends_on:
       - mongo
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
 
   mongo:
     image: mongo:7

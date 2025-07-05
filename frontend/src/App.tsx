@@ -1,5 +1,5 @@
 
-
+import {Button} from './components/Button';
 function App() {
 
   return (
@@ -11,6 +11,7 @@ function App() {
       <p>Make sure to run the backend server as well.</p>
       <p>Enjoy coding!</p>
       <p>For more information, visit the <a href="https://github.com/birat04/Brainly" target="_blank" rel="noreferrer">Brainly GitHub repository</a>.</p>
+      <Button variant="primary" size="md" text="Click Me" />
     </>
   )
 }

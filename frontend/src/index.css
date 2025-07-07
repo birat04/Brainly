@@ -1,17 +1,20 @@
 @import "tailwindcss";
 
-.btn {
-  @apply px-4 py-2 rounded-md font-medium transition duration-200;
+
+
+.button-primary {
+  @apply bg-purple-600 text-white px-4 py-2 rounded-md;
 }
 
-.btn-default {
-  @apply bg-purple-600 text-white border;
+.button-secondary {
+  @apply bg-purple-300 text-white px-4 py-2 rounded-md;
 }
 
-.btn-primary {
-  @apply bg-purple-500 text-white;
+:root {
+  --color-primary: theme(colors.purple.600);
+  --color-secondary: theme(colors.purple.400);
 }
 
-.btn-secondary {
-  @apply bg-purple-300 text-white;
+.custom-bg {
+  background-color: var(--color-primary);
 }

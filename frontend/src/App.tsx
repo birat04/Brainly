@@ -1,19 +1,15 @@
+import { Button } from './components/Button';
+import { PlusIcon } from './icons/plusIcon';
+import { ShareIcon } from './icons/ShareIcon';
 
-import {Button} from './components/Button';
 function App() {
-
   return (
-    <>
-      
-      <h1>Welcome to Brainly</h1>
-      <p>This is a simple React application.</p>
-      <p>Check the console for any messages.</p>
-      <p>Make sure to run the backend server as well.</p>
-      <p>Enjoy coding!</p>
-      <p>For more information, visit the <a href="https://github.com/birat04/Brainly" target="_blank" rel="noreferrer">Brainly GitHub repository</a>.</p>
-      <Button variant="primary" size="md" text="Click Me" />
-    </>
-  )
+    <div className="space-x-4 p-4">
+      <Button startIcon={<PlusIcon />} variant="primary" size="md" text="Share"/>
+      <Button startIcon={<ShareIcon />} variant="secondary" size="md" text="Add Content"/>
+     
+    </div>
+  );
 }
 
-export default App
+export default App;

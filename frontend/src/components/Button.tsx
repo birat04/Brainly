@@ -11,8 +11,8 @@ export interface ButtonProps {
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: 'bg-purple-600 text-white hover:bg-purple-700 active:scale-95',
-  secondary: 'bg-purple-300 text-purple-800 hover:bg-purple-400 active:scale-95',
+  primary: 'bg-blue-500 text-white hover:bg-blue-700 active:scale-95',
+  secondary: 'bg-blue-300 text-blue-800 hover:bg-blue-400 active:scale-95',
 };
 
 const sizeStyles: Record<SizeVariant, string> = {

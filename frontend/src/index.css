@@ -3,16 +3,16 @@
 
 
 .button-primary {
-  @apply bg-purple-600 text-white px-4 py-2 rounded-md;
+  @apply bg-blue-600 text-white px-4 py-2 rounded-md;
 }
 
 .button-secondary {
-  @apply bg-purple-300 text-white px-4 py-2 rounded-md;
+  @apply bg-blue-300 text-white px-4 py-2 rounded-md;
 }
 
 :root {
-  --color-primary: theme(colors.purple.600);
-  --color-secondary: theme(colors.purple.400);
+  --color-primary: theme(colors.blue.600);
+  --color-secondary: theme(colors.blue.400);
 }
 
 .custom-bg {

@@ -1,4 +1,4 @@
-import { randomInt } from "crypto";
+
 
 export function random(len: number): string {
   if (len <= 0 || !Number.isInteger(len)) {
@@ -10,7 +10,7 @@ export function random(len: number): string {
 
   let ans = "";
   for (let i = 0; i < len; i++) {
-    ans += options[randomInt(length)];
+    ans += options[Math.floor((Math.random() * length))];
   }
 
   return ans;

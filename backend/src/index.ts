@@ -108,28 +108,39 @@ app.post("/api/v1/brain/share", userMiddleware, async (req, res) => {
     
 
 
-app.get("/api/v1/brain/:shareLink", async (req, res) => {
-  const hash = req.params.shareLink;
-  const linkDoc = await LinkModel.findOne({ hash });
 
-  if (!linkDoc) {
-    res.status(404).json({ message: "No such link" });
-    return;
+
+app.get(
+  "/api/v1/brain/:shareLink",
+  async (req: Request<{ shareLink: string }>, res: Response) => {
+    try {
+      const { shareLink: hash } = req.params;
+      const link = await LinkModel.findOne({ hash }).lean();
+
+      if (!link) {
+        return res.status(404).json({ error: "Shareable link not found" });
+      }
+
+      const [user, content] = await Promise.all([
+        UserModel.findById(link.userId).lean().select("-password"),
+        ContentModel.find({ userId: link.userId }).lean()
+      ]);
+
+      return res.json({ user, content });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Internal server error" });
+    }
   }
+);
 
-  const content = await ContentModel.find({ userId: linkDoc.userId });
-  const user = await UserModel.findById(linkDoc.userId);
 
-  if (!user) {
-    res.status(404).json({ message: "User not found, please try again" });
-    return;
-  }
 
-  res.json({
-    username: user.username,
-    content
-  });
-});
+
+  
+
+
+ 
 
 app.get("/api/v1/debug/users", async (req, res) => {
   const users = await UserModel.find();

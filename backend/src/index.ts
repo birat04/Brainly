@@ -107,32 +107,41 @@ app.post("/api/v1/brain/share", userMiddleware, async (req, res) => {
 });
     
 
-
-
-
-app.get(
-  "/api/v1/brain/:shareLink",
-  async (req: Request<{ shareLink: string }>, res: Response) => {
-    try {
-      const { shareLink: hash } = req.params;
-      const link = await LinkModel.findOne({ hash }).lean();
-
-      if (!link) {
-        return res.status(404).json({ error: "Shareable link not found" });
-      }
-
-      const [user, content] = await Promise.all([
-        UserModel.findById(link.userId).lean().select("-password"),
-        ContentModel.find({ userId: link.userId }).lean()
-      ]);
-
-      return res.json({ user, content });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Internal server error" });
-    }
+app.get("/api/v1/brain/:shareLink", async (req, res) => {
+  const hash = req.params.shareLink;
+  const link = await LinkModel.findOne({
+    hash
+  });
+  if(!link){
+    res.status(404).json({ 
+      message: "Shareable link not found" 
+    })
+    return;
   }
-);
+  const content = await ContentModel.findOne({
+    userId: link.userId
+  })
+  const user = await UserModel.findById({
+    userId: link.userId
+
+  })
+  if(!content || !user){
+    res.status(404).json({ 
+      message: "Content or user not found" 
+    })
+    return;
+  }
+
+  res.json({
+    username: user?.username,
+    content
+  })
+
+})
+
+
+
+
 
 
 

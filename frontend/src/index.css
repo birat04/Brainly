@@ -1,20 +1,3 @@
-@import "tailwindcss";
-
-
-
-.button-primary {
-  @apply bg-blue-600 text-white px-4 py-2 rounded-md;
-}
-
-.button-secondary {
-  @apply bg-blue-300 text-white px-4 py-2 rounded-md;
-}
-
-:root {
-  --color-primary: theme(colors.blue.600);
-  --color-secondary: theme(colors.blue.400);
-}
-
-.custom-bg {
-  background-color: var(--color-primary);
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

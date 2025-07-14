@@ -98,12 +98,13 @@ app.post("/api/v1/brain/share", userMiddleware, async (req, res) => {
       userId:req.userId,
       hash:random(10),
     })
+    res.json({ message: "created shareable link" });
   } else {
     LinkModel.deleteOne({
       userId:req.userId
     })
+    res.json({ message: "removed shareable link" });
   }
-  res.json({ message: "Shareable link created successfully" });
 });
     
 
@@ -122,7 +123,11 @@ app.get("/api/v1/brain/:shareLink", async (req, res) => {
     userId: link.userId
   })
   const user = await UserModel.findById({
+<<<<<<< HEAD
     userId: link.userId
+=======
+    _id: link.userId
+>>>>>>> f15f1b6 (update in content)
 
   })
   if(!content || !user){

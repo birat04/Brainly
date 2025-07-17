@@ -1,9 +1,11 @@
-import { ShareIcon } from "../icons/ShareIcon";
+import { PreviewIcon } from "../icons/PreviewIcon";
+import { DeleteIcon } from "../icons/DeleteIcon";
 
 interface CardProps {
   title: string;
   link: string;
   type: "video" | "article" | "image";
+  onDelete?: () => void;
 }
 
 function getEmbed(link: string) {
@@ -52,24 +54,7 @@ function getEmbed(link: string) {
       };
     }
 
-    if (host.includes("soundcloud.com")) {
-      return {
-        src: `https://w.soundcloud.com/player/?url=${encodeURIComponent("https://soundcloud.com/user-588354172/lofi-chill-study")}&auto_play=false&show_user=true`,
-        width: "100%",
-        height: "166",
-        allow: "autoplay",
-      };
-    }
-
-    if (host.includes("open.spotify.com")) {
-      return {
-        src: `https://open.spotify.com/embed/episode/4rOoJ6Egrf8K2IrywzwOMk?utm_source=generator`,
-        width: "100%",
-        height: "152",
-        allow:
-          "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture",
-      };
-    }
+   
   } catch (err) {
     console.error("Invalid URL", err);
   }
@@ -77,14 +62,17 @@ function getEmbed(link: string) {
   return null;
 }
 
-export function Card({ title, link, type }: CardProps) {
+export function Card({ title, link, type, onDelete }: CardProps) {
   const embed = type === "video" ? getEmbed(link) : null;
 
   return (
     <div className="p-4 bg-white rounded-xl shadow-md border w-full max-w-md mx-auto">
       <div className="flex justify-between items-start mb-4">
         <h3 className="flex items-center gap-2 text-md font-medium leading-tight">
-          <ShareIcon className="text-gray-500 w-5 h-5" />
+            <DeleteIcon
+                className="w-5 h-5 text-red-500 hover:text-red-700"
+                onClick={onDelete}
+            />
           {title}
         </h3>
 
@@ -95,7 +83,7 @@ export function Card({ title, link, type }: CardProps) {
             rel="noopener noreferrer"
             className="text-gray-500 hover:text-gray-700"
           >
-            <ShareIcon className="w-5 h-5" />
+            <PreviewIcon className="w-5 h-5" />
           </a>
         </div>
       </div>

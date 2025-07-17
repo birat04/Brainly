@@ -13,6 +13,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@prisma/client": "^6.12.0",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^17.0.1",
@@ -24,6 +25,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
+    "prisma": "^6.12.0",
     "typescript": "^5.8.3"
   }
 }

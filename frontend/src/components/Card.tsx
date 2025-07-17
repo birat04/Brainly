@@ -53,8 +53,6 @@ function getEmbed(link: string) {
         allow: "fullscreen",
       };
     }
-
-   
   } catch (err) {
     console.error("Invalid URL", err);
   }
@@ -66,17 +64,11 @@ export function Card({ title, link, type, onDelete }: CardProps) {
   const embed = type === "video" ? getEmbed(link) : null;
 
   return (
-    <div className="p-4 bg-white rounded-xl shadow-md border w-full max-w-md mx-auto">
-      <div className="flex justify-between items-start mb-4">
-        <h3 className="flex items-center gap-2 text-md font-medium leading-tight">
-            <DeleteIcon
-                className="w-5 h-5 text-red-500 hover:text-red-700"
-                onClick={onDelete}
-            />
-          {title}
-        </h3>
+    <div className="p-3 bg-white rounded-lg shadow-sm border w-full max-w-md mx-auto mb-2">
+      <div className="flex justify-between items-start mb-2">
+        <h3 className="text-sm font-medium leading-tight">{title}</h3>
 
-        <div className="flex gap-3">
+        <div className="flex gap-2 items-center">
           <a
             href={link}
             target="_blank"
@@ -85,6 +77,9 @@ export function Card({ title, link, type, onDelete }: CardProps) {
           >
             <PreviewIcon className="w-5 h-5" />
           </a>
+          <button onClick={onDelete}>
+            <DeleteIcon className="w-5 h-5 text-red-500 hover:text-red-700" />
+          </button>
         </div>
       </div>
 
@@ -107,7 +102,7 @@ export function Card({ title, link, type, onDelete }: CardProps) {
           href={link}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 hover:underline"
+          className="text-blue-600 hover:underline text-sm"
         >
           Read article
         </a>

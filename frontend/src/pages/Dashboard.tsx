@@ -8,7 +8,7 @@ import { PlusIcon } from '../icons/PlusIcon';
 import { ShareIcon } from '../icons/ShareIcon';
 import { SideBar } from '../components/SideBar';
 
-function Dashboard() {
+export function Dashboard() {
   const [showModal, setShowModal] = useState(false);
   const [cards, setCards] = useState<
     { title: string; link: string; type: 'video' | 'article' | 'image' }[]
@@ -100,4 +100,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+

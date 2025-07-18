@@ -64,7 +64,7 @@ export function Card({ title, link, type, onDelete }: CardProps) {
   const embed = type === "video" ? getEmbed(link) : null;
 
   return (
-    <div className="p-3 bg-white rounded-lg shadow-sm border w-full max-w-md mx-auto mb-2">
+    <div className="p-3 bg-white rounded-lg shadow-sm border w-96 max-w-md mx-auto mb-2">
       <div className="flex justify-between items-start mb-2">
         <h3 className="text-sm font-medium leading-tight">{title}</h3>
 

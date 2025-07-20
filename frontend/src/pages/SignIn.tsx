@@ -9,6 +9,10 @@ export function SignIn() {
   const [loading, setLoading] = useState(false);
 
   const handleSignIn = async () => {
+    if (!username || !password) {
+      alert("Please enter both username and password.");
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch(`${BackendURL}/api/v1/signin`, {

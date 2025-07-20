@@ -1,19 +1,18 @@
 import mongoose from "mongoose";
-import dotenv from "dotenv";
-
-dotenv.config();
+import bcrypt from "bcrypt";
 
 const connectDB = async (): Promise<void> => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI!);
-    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-  } catch (error) {
-    console.error("❌ MongoDB connection failed:", error);
+    await mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/brainly");
+    console.log("✅ MongoDB connected");
+  } catch (err) {
+    console.error("❌ MongoDB connection error:", err);
     process.exit(1);
   }
 };
 
 export default connectDB;
+
 
 
 const { Schema } = mongoose;
@@ -29,6 +28,17 @@ const UserSchema = new Schema({
     required: true
   }
 }, { timestamps: true });
+
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (err) {
+    next(err as Error);
+  }
+});
 
 export const UserModel = mongoose.model("User", UserSchema);
 

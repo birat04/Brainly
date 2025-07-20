@@ -2,6 +2,8 @@ import express, { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 declare global {
   namespace Express {
@@ -11,9 +13,11 @@ declare global {
   }
 }
 
-import { UserModel, LinkModel, ContentModel } from "./db";
+import connectDB, { UserModel, LinkModel, ContentModel } from "./db";
 import { JWT_PASSWORD } from "./config";
 import { random } from "./utils";
+
+
 
 const app = express();
 app.use(express.json());

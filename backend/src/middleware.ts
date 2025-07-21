@@ -9,16 +9,17 @@ interface JWTPayload {
 declare global {
   namespace Express {
     interface Request {
-      userId: string;
+      userId: number;
     }
   }
 }
 
-export const userMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const userMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   const authHeader = req.headers["authorization"];
 
   if (!authHeader) {
-    return res.status(401).json({ message: "Authorization header missing" });
+    res.status(401).json({ message: "Authorization header missing" });
+    return;
   }
 
   const token = authHeader.startsWith("Bearer ") 
@@ -27,12 +28,14 @@ export const userMiddleware = (req: Request, res: Response, next: NextFunction) 
 
   try {
     const decoded = jwt.verify(token, JWT_PASSWORD) as JWTPayload;
-    req.userId = decoded.id;
+    req.userId = Number(decoded.id);
     next();
   } catch (err: any) {
     if (err.name === "TokenExpiredError") {
-      return res.status(401).json({ message: "Token expired" });
+      res.status(401).json({ message: "Token expired" });
+      return;
     }
-    return res.status(401).json({ message: "Invalid or missing token" });
+    res.status(401).json({ message: "Invalid or missing token" });
+    return;
   }
 };

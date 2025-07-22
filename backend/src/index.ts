@@ -35,11 +35,13 @@ app.post("/api/v1/signup", async (req, res) => {
 app.post("/api/v1/signin", async (req, res) => {
   const { username, password } = req.body;
   const existingUser = await prisma.user.findUnique({ where: { username } });
+  console.log("User:",existingUser);
   if (!existingUser) {
     res.status(403).json({ message: "Invalid credentials" });
     return;
   }
   const isMatch = await bcrypt.compare(password, existingUser.password);
+  console.log("Password match:",isMatch)
   if (!isMatch) {
     res.status(403).json({ message: "Invalid credentials" });
     return;

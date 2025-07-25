@@ -2,11 +2,15 @@ import { useState } from "react";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
 import { BackendURL } from "../config";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 export function SignUp() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSignUp = async () => {
     setLoading(true);
@@ -25,14 +29,12 @@ export function SignUp() {
       }
 
       const data = await res.json();
-      console.log("Signup successful:", data);
-
       localStorage.setItem("token", data.token);
-      alert("Signup successful!");
-
+      toast.success("Signup successful!");
+      setTimeout(() => navigate("/dashboard"), 1000);
     } catch (err) {
       console.error(err);
-      alert("Signup failed. Please try again.");
+      toast.error("Signup failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -40,6 +42,7 @@ export function SignUp() {
 
   return (
     <div className="h-screen w-screen bg-gray-200 flex justify-center items-center">
+      <ToastContainer />
       <div className="bg-white rounded border min-w-64 p-6 shadow-md space-y-4">
         <Input
           placeholder="User Name"

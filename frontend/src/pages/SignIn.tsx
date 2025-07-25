@@ -1,16 +1,20 @@
 import { useState } from "react";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
-import { BackendURL } from "../config"; 
+import { BackendURL } from "../config";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 export function SignIn() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSignIn = async () => {
     if (!username || !password) {
-      alert("Please enter both username and password.");
+      toast.error("Please enter both username and password.");
       return;
     }
     setLoading(true);
@@ -29,14 +33,12 @@ export function SignIn() {
       }
 
       const data = await res.json();
-      console.log("Sign in successful:", data);
-
       localStorage.setItem("token", data.token);
-      alert("Sign in successful!");
-
+      toast.success("Sign in successful!");
+      setTimeout(() => navigate("/dashboard"), 1000);
     } catch (err) {
       console.error(err);
-      alert("Sign in failed. Please check your credentials.");
+      toast.error("Sign in failed. Please check your credentials.");
     } finally {
       setLoading(false);
     }
@@ -44,6 +46,7 @@ export function SignIn() {
 
   return (
     <div className="h-screen w-screen bg-gray-200 flex justify-center items-center">
+      <ToastContainer />
       <div className="bg-white rounded border min-w-64 p-6 shadow-md space-y-4">
         <Input
           placeholder="User Name"

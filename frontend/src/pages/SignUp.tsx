@@ -15,7 +15,7 @@ export function SignUp() {
   const handleSignUp = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${BackendURL}/api/v1/signup`, {
+      const res = await fetch(`${BackendURL}/api/v1/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -29,7 +29,11 @@ export function SignUp() {
       }
 
       const data = await res.json();
-      localStorage.setItem("token", data.token);
+      const token = data.token ?? data.data?.token;
+      if (!token) {
+        throw new Error("No token returned from server");
+      }
+      localStorage.setItem("token", token);
       toast.success("Signup successful!");
       setTimeout(() => navigate("/dashboard"), 1000);
     } catch (err) {

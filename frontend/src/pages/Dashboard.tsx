@@ -136,11 +136,44 @@ export function Dashboard() {
     }
   };
 
-  const handleShare = () => {
-    if (cards.length === 0) return;
-    const lastLink = cards[cards.length - 1].link;
-    navigator.clipboard.writeText(lastLink);
-    toast.info(`Link copied to clipboard: ${lastLink}`);
+  const handleShare = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('You must be signed in to share your brain.');
+        return;
+      }
+
+      if (cards.length === 0) {
+        toast.info('No content to share yet.');
+        return;
+      }
+
+      const res = await fetch(`${BackendURL}/api/v1/brain/share`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ share: true }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to create shareable link');
+      }
+
+      const data: { hash: string } = await res.json();
+      const shareUrl = `${BackendURL}/api/v1/brain/${data.hash}`;
+
+      await navigator.clipboard.writeText(shareUrl);
+      toast.info('Shareable link copied to clipboard!');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message || 'Error creating share link');
+      } else {
+        toast.error('Error creating share link');
+      }
+    }
   };
 
   return (

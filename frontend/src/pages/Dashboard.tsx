@@ -97,17 +97,13 @@ export function Dashboard() {
       const refetchData = await refetch.json();
       const content = refetchData.data?.content || [];
       setCards(
-        content.map((item: BackendContentItem) => ({
-          id: item._id || item.id,
-          title: item.title,
-          link: item.link,
-          type: item.type,
-        }))
-      );
-          link: item.link,
-          type: item.type,
-        }))
-      );
+          content.map((item: BackendContentItem) => ({
+            id: item._id || item.id,
+            title: item.title,
+            link: item.link,
+            type: item.type,
+          }))
+        );
       setLoading(false);
     } catch (err: unknown) {
       if (err instanceof Error) {

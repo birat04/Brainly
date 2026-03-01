@@ -47,9 +47,10 @@ export function Dashboard() {
         });
         if (!res.ok) throw new Error('Failed to fetch content');
         const data = await res.json();
+        const content = data.data?.content || [];
         
         setCards(
-          data.content.map((item: BackendContentItem) => ({
+          content.map((item: BackendContentItem) => ({
             id: item._id || item.id || '',
             title: item.title,
             link: item.link,
@@ -94,10 +95,15 @@ export function Dashboard() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const refetchData = await refetch.json();
+      const content = refetchData.data?.content || [];
       setCards(
-        refetchData.content.map((item: BackendContentItem) => ({
+        content.map((item: BackendContentItem) => ({
           id: item._id || item.id,
           title: item.title,
+          link: item.link,
+          type: item.type,
+        }))
+      );
           link: item.link,
           type: item.type,
         }))

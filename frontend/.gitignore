@@ -22,3 +22,35 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Testing
+coverage/
+.nyc_output/
+
+# Build artifacts
+build/
+
+# IDE
+.eslintcache
+.parcel-cache
+.cache
+
+# OS
+.AppleDouble
+.LSOverride
+Thumbs.db
+*.pem
+
+# Misc
+.turbo/
+.pnpm-lock.yaml
+.yarn/cache
+.yarn/unplugged

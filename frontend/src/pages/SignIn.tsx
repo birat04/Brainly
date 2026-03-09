@@ -28,8 +28,9 @@ export function SignIn() {
       });
 
       if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(`Sign in failed: ${errorText}`);
+        const err = await res.json().catch(() => ({}));
+        const msg = err?.error?.message || err?.message || "Sign in failed";
+        throw new Error(msg);
       }
 
       const data = await res.json();
@@ -42,7 +43,7 @@ export function SignIn() {
       setTimeout(() => navigate("/dashboard"), 1000);
     } catch (err) {
       console.error(err);
-      toast.error("Sign in failed. Please check your credentials.");
+      toast.error(err instanceof Error ? err.message : "Sign in failed. Please check your credentials.");
     } finally {
       setLoading(false);
     }

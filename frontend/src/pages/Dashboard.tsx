@@ -98,7 +98,7 @@ export function Dashboard() {
       const content = refetchData.data?.content || [];
       setCards(
           content.map((item: BackendContentItem) => ({
-            id: item._id || item.id,
+            id: item._id || item.id || '',
             title: item.title,
             link: item.link,
             type: item.type,
@@ -164,8 +164,10 @@ export function Dashboard() {
         throw new Error('Failed to create shareable link');
       }
 
-      const data: { hash: string } = await res.json();
-      const shareUrl = `${BackendURL}/api/v1/brain/${data.hash}`;
+      const data = await res.json();
+      const hash = data.data?.hash ?? data.hash;
+      if (!hash) throw new Error('No share hash returned');
+      const shareUrl = `${BackendURL}/api/v1/brain/${hash}`;
 
       await navigator.clipboard.writeText(shareUrl);
       toast.info('Shareable link copied to clipboard!');

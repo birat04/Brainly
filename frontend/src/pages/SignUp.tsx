@@ -24,8 +24,9 @@ export function SignUp() {
       });
 
       if (!res.ok) {
-        const errorMessage = await res.text();
-        throw new Error(`Signup failed: ${errorMessage}`);
+        const err = await res.json().catch(() => ({}));
+        const msg = err?.error?.message || err?.message || "Signup failed";
+        throw new Error(msg);
       }
 
       const data = await res.json();
@@ -38,7 +39,7 @@ export function SignUp() {
       setTimeout(() => navigate("/dashboard"), 1000);
     } catch (err) {
       console.error(err);
-      toast.error("Signup failed. Please try again.");
+      toast.error(err instanceof Error ? err.message : "Signup failed. Please try again.");
     } finally {
       setLoading(false);
     }

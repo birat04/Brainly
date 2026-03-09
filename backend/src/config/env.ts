@@ -15,7 +15,7 @@ function getEnv(name: string, required = true): string {
 export const env = {
   nodeEnv: (process.env.NODE_ENV || "development") as NodeEnv,
   port: parseInt(process.env.PORT || "3000", 10),
-  mongoUri: getEnv("MONGO_URI"),
+  mongoUri: process.env.MONGO_URI || "mongodb://127.0.0.1:27017/brainly",
   jwt: {
     secret: getEnv("JWT_PASSWORD"),
     expiresIn: process.env.JWT_EXPIRES_IN || "7d",

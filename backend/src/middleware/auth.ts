@@ -22,7 +22,7 @@ export function authMiddleware(
 
   try {
     const decoded = jwt.verify(token, env.jwt.secret) as JWTPayload;
-    (req as any).userId = decoded.id;
+    req.userId = decoded.id;
     next();
   } catch (err: any) {
     if (err.name === "TokenExpiredError") {

@@ -29,6 +29,10 @@ const apiLimiter = rateLimit({
 
 app.use("/api", apiLimiter);
 
+app.get("/health", (_req, res) => {
+  res.status(200).json({ ok: true });
+});
+
 app.use("/api/v1", routerV1);
 
 app.use(notFoundHandler);

@@ -14,6 +14,11 @@ export default function SettingsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { user } = useAuth();
 
+  const [formValues, setFormValues] = useState({
+    username: user?.username || '',
+    password: '',
+  });
+
   const settingsSections = [
     {
       icon: User,
@@ -21,7 +26,7 @@ export default function SettingsPage() {
       description: 'Update your profile information',
       items: [
         { label: 'Email', value: user?.email || '', disabled: true },
-        { label: 'Username', value: user?.username || '', disabled: false },
+        { label: 'Username', value: formValues.username, disabled: false, key: 'username' },
       ],
     },
     {
@@ -34,7 +39,7 @@ export default function SettingsPage() {
       icon: Lock,
       title: 'Security',
       description: 'Update your password and security settings',
-      items: [{ label: 'Change password', value: '', disabled: false }],
+      items: [{ label: 'Change password', value: formValues.password, disabled: false, key: 'password' }],
     },
   ];
 
@@ -92,6 +97,16 @@ export default function SettingsPage() {
                             value={item.value}
                             disabled={item.disabled}
                             placeholder={item.disabled ? 'Not editable' : 'Enter value'}
+                            onChange={
+                              item.disabled
+                                ? undefined
+                                : (e) =>
+                                    setFormValues((prev) => ({
+                                      ...prev,
+                                      //@ts-ignore
+                                      [item.key]: e.target.value,
+                                    }))
+                            }
                           />
                         </div>
                       ))}

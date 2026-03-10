@@ -468,4 +468,3 @@ NEXT_PUBLIC_API_URL=your-api-endpoint.com
 **Built with Next.js 16, React 19, TypeScript, and Tailwind CSS**
 
 For support or questions, check the browser console for errors and verify your backend API is running.
-# Brainly

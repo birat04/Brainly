@@ -3,6 +3,7 @@ import { getMongoClient } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import { ensureIndexes } from '@/lib/db';
 import { z } from 'zod';
+import { corsHeaders, withCors } from '@/lib/cors';
 
 export async function GET(req: NextRequest) {
   // indexes are created on signup/post; no need to run every GET
@@ -18,7 +19,7 @@ export async function GET(req: NextRequest) {
     createdAt: d.createdAt,
     updatedAt: d.updatedAt,
   }));
-  return NextResponse.json(contents);
+  return withCors(NextResponse.json(contents));
 }
 
 export async function POST(req: NextRequest) {
@@ -31,7 +32,9 @@ export async function POST(req: NextRequest) {
     });
     const parsed = schema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ message: 'Invalid data', errors: parsed.error.format() }, { status: 400 });
+      return withCors(
+        NextResponse.json({ message: 'Invalid data', errors: parsed.error.format() }, { status: 400 })
+      );
     }
     const { title, type, link } = parsed.data;
     await ensureIndexes();
@@ -48,8 +51,16 @@ export async function POST(req: NextRequest) {
       createdAt: now,
       updatedAt: now,
     };
-    return NextResponse.json(content);
+    return withCors(NextResponse.json(content));
   } catch (e) {
-    return NextResponse.json({ message: 'Failed to create content' }, { status: 500 });
+    return withCors(
+      NextResponse.json({ message: 'Failed to create content' }, { status: 500 })
+    );
   }
+}
+
+export function OPTIONS() {
+  const res = new NextResponse(null, { status: 204 });
+  withCors(res);
+  return res;
 }

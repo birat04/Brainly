@@ -3,6 +3,7 @@ import { getMongoClient } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import { ensureIndexes } from '@/lib/db';
 import { z } from 'zod';
+import { corsHeaders, withCors } from '@/lib/cors';
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,7 +14,9 @@ export async function POST(req: NextRequest) {
     });
     const parsed = schema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ message: 'Invalid data', errors: parsed.error.format() }, { status: 400 });
+      return withCors(
+        NextResponse.json({ message: 'Invalid data', errors: parsed.error.format() }, { status: 400 })
+      );
     }
     const { shareCode, contentIds } = parsed.data;
     let ids = contentIds || [];
@@ -47,8 +50,16 @@ export async function POST(req: NextRequest) {
     const result = await db.collection('shares').insertOne(shareDoc);
     const shareId = result.insertedId.toString();
     const shareLink = `/brain/${shareId}`;
-    return NextResponse.json({ shareId, shareLink });
+    return withCors(NextResponse.json({ shareId, shareLink }));
   } catch (e) {
-    return NextResponse.json({ message: 'Failed to create share' }, { status: 500 });
+    return withCors(
+      NextResponse.json({ message: 'Failed to create share' }, { status: 500 })
+    );
   }
+}
+
+export function OPTIONS() {
+  const res = new NextResponse(null, { status: 204 });
+  withCors(res);
+  return res;
 }

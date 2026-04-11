@@ -1,22 +1,14 @@
 # Node modules
-backend/node_modules/
-frontend/node_modules/
+node_modules/
 api/node_modules/
 
-# Build output
-backend/dist/
-backend/build/
-frontend/build/
-frontend/dist/
-frontend/dist-ssr/
+# Next.js
+.next/
+out/
 
 # Environment variables
-backend/.env
-backend/.env.local
-backend/.env.*.local
-frontend/.env
-frontend/.env.local
-frontend/.env.*.local
+.env.local
+.env.*.local
 
 # Logs
 logs

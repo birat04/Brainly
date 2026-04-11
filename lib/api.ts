@@ -27,13 +27,28 @@ export const authAPI = {
   },
 
   async signin(data: SignInPayload) {
-    const response = await axiosInstance.post("/api/auth/signin", data);
-    return response.data as {
-      success: boolean;
-      token: string;
-      user: User;
-      message?: string;
-    };
+    const payload = data.identifier.includes("@")
+      ? { email: data.identifier, password: data.password }
+      : { username: data.identifier, password: data.password };
+
+    try {
+      const response = await axiosInstance.post("/api/auth/signin", payload);
+
+      return response.data as {
+        success: boolean;
+        token: string;
+      };
+    } catch (error) {
+      const message =
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        typeof (error as { response?: { data?: { message?: string } } }).response?.data?.message === "string"
+          ? (error as { response: { data: { message: string } } }).response.data.message
+          : "Invalid email or password.";
+
+      throw new Error(message);
+    }
   },
 
   async getCurrentUser(): Promise<User> {

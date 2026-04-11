@@ -11,14 +11,14 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { authAPI, type SignUpPayload } from "@/lib/api";
+import { authAPI, type SignInPayload, type SignUpPayload } from "@/lib/api";
 import { clearAuthToken, setAuthToken } from "@/lib/utils";
 import type { User } from "@/types";
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  signin: (identifier: string, password: string) => Promise<void>;
+  signin: (data: SignInPayload) => Promise<void>;
   signup: (data: SignUpPayload) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -62,23 +62,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [refreshUser]);
 
   const signin = useCallback(
-    async (identifier: string, password: string) => {
+    async (data: SignInPayload) => {
       try {
-        const response = await authAPI.signin({ identifier, password });
+        const response = await authAPI.signin(data);
         setAuthToken(response.token);
-        setUser(response.user);
-        toast.success("Welcome back!");
+        await refreshUser();
+        toast.success("Signed in successfully");
         router.push("/dashboard");
       } catch (error: unknown) {
         const message =
-          error && typeof error === "object" && "response" in error
-            ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
-            : undefined;
+          error && typeof error === "object" && "message" in error
+            ? String((error as { message?: unknown }).message ?? "")
+            : "";
         toast.error(message || "Sign in failed");
         throw error;
       }
     },
-    [router],
+    [refreshUser, router],
   );
 
   const signup = useCallback(

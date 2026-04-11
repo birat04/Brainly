@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { pageVariants } from "@/lib/animations";
 import type { z } from "zod";
+import { useState } from "react";
 
 type FormValues = z.infer<typeof signInSchema> & { remember?: boolean };
 
@@ -31,11 +32,20 @@ export default function SignInPage() {
   });
 
   const remember = watch("remember");
+  const [error, setError] = useState<string | null>(null);
 
-  const onSubmit = async (data: FormValues) => {
-    await signin(data.identifier, data.password);
-    if (!data.remember && typeof window !== "undefined") {
-      // still keep token for session; "remember" is a UX hint only here
+  const onSubmit = async (values: FormValues) => {
+    setError(null);
+    try {
+      await signin({
+        identifier: values.identifier,
+        password: values.password,
+      });
+      if (!values.remember && typeof window !== "undefined") {
+        // still keep token for session; "remember" is a UX hint only here
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Sign in failed.");
     }
   };
 
@@ -81,6 +91,7 @@ export default function SignInPage() {
               )}
             </Button>
           </form>
+          {error && <p className="text-sm text-red-500">{error}</p>}
           <p className="mt-6 text-center text-sm text-muted-foreground">
             No account?{" "}
             <Link href="/signup" className="text-primary hover:underline">

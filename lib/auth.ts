@@ -44,9 +44,16 @@ export async function hashPassword(password: string): Promise<string> {
 
 export async function comparePassword(
   password: string,
-  hashedPassword: string,
+  hashedPassword: string | null | undefined,
 ): Promise<boolean> {
-  return bcrypt.compare(password, hashedPassword);
+  if (hashedPassword == null || typeof hashedPassword !== "string") {
+    return false;
+  }
+  const hash = hashedPassword.trim();
+  if (!hash.startsWith("$2")) {
+    return false;
+  }
+  return bcrypt.compare(password, hash);
 }
 
 export function generateShareId(): string {

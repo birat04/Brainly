@@ -66,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const response = await authAPI.signin(data);
         setAuthToken(response.token);
-        await refreshUser();
+        setUser(response.user);
         toast.success("Signed in successfully");
         router.push("/dashboard");
       } catch (error: unknown) {

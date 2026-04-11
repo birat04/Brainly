@@ -30,6 +30,19 @@ export function copyToClipboard(text: string): Promise<void> {
   return navigator.clipboard.writeText(text);
 }
 
+/** Escape string for safe use inside a RegExp */
+export function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/** Normalize login identifier (trim, strip zero-width chars, Unicode NFC). */
+export function normalizeLoginIdentifier(value: string): string {
+  return value
+    .trim()
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .normalize("NFC");
+}
+
 const TOKEN_KEY = "token";
 
 export function setAuthToken(token: string) {

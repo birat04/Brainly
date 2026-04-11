@@ -4,12 +4,15 @@ import { getDatabase } from "@/lib/db";
 import { generateToken, hashPassword } from "@/lib/auth";
 import { signUpSchema } from "@/lib/validations";
 import { mapUser } from "@/lib/mappers";
+import { normalizeLoginIdentifier } from "@/lib/utils";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const validated = signUpSchema.parse(body);
-    const { email, username, fullName, password } = validated;
+    const { fullName, password } = validated;
+    const email = normalizeLoginIdentifier(validated.email).toLowerCase();
+    const username = normalizeLoginIdentifier(validated.username);
 
     const db = await getDatabase();
     const users = db.collection("users");
@@ -19,7 +22,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          message: existing.email === email ? "Email already registered" : "Username already taken",
+          message: String(existing.email).toLowerCase() === email ? "Email already registered" : "Username already taken",
         },
         { status: 400 },
       );

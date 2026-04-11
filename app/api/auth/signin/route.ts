@@ -5,24 +5,40 @@ import { getDatabase } from "@/lib/db";
 import { comparePassword, generateToken } from "@/lib/auth";
 import { signInSchema } from "@/lib/validations";
 import { mapUser } from "@/lib/mappers";
+import { normalizeLoginIdentifier } from "@/lib/utils";
+import { findUserByLogin } from "@/lib/find-user-by-login";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { identifier, password } = signInSchema.parse(body);
+    const parsed = signInSchema.parse(body);
+    const identifier = normalizeLoginIdentifier(parsed.identifier);
+    const password = parsed.password;
 
     const db = await getDatabase();
     const users = db.collection("users");
 
-    const user = await users.findOne({
-      $or: [{ email: identifier }, { username: identifier }],
-    });
+    const user = await findUserByLogin(users, identifier);
 
     if (!user) {
+      if (process.env.NODE_ENV === "development") {
+        const count = await users.countDocuments();
+        const sample = await users.findOne({}, { projection: { username: 1, email: 1 } });
+        console.warn(
+          "[auth/signin] No user for identifier:",
+          identifier.slice(0, 64),
+          "| users count:",
+          count,
+          sample ? `| example doc: username=${String(sample.username)} email=${String(sample.email)}` : "",
+        );
+      }
       return NextResponse.json({ success: false, message: "Invalid credentials" }, { status: 401 });
     }
 
     const valid = await comparePassword(password, user.password as string);
+    if (!valid && process.env.NODE_ENV === "development") {
+      console.warn("[auth/signin] Password mismatch for user id:", String(user._id));
+    }
     if (!valid) {
       return NextResponse.json({ success: false, message: "Invalid credentials" }, { status: 401 });
     }

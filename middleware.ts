@@ -1,8 +1,31 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyToken } from "@/lib/auth";
+import { verifyAccessToken } from "@/lib/auth/access-token";
+import {
+  ACCESS_COOKIE,
+  LEGACY_TOKEN_COOKIE,
+  REFRESH_COOKIE,
+} from "@/lib/auth/constants";
 
 const authRoutes = ["/signin", "/signup"];
+
+async function readSessionHints(request: NextRequest) {
+  const accessRaw =
+    request.cookies.get(ACCESS_COOKIE)?.value || request.cookies.get(LEGACY_TOKEN_COOKIE)?.value;
+  const access = accessRaw
+    ? accessRaw.includes("%")
+      ? decodeURIComponent(accessRaw)
+      : accessRaw
+    : null;
+  const hasRefresh = Boolean(request.cookies.get(REFRESH_COOKIE)?.value);
+
+  let payload = null;
+  if (access) {
+    payload = (await verifyAccessToken(access)) ?? (await verifyToken(access));
+  }
+  return { payload, hasRefresh };
+}
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -15,8 +38,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const raw = request.cookies.get("token")?.value;
-  const token = raw ? decodeURIComponent(raw) : null;
+  const { payload, hasRefresh } = await readSessionHints(request);
+  const isAuthed = Boolean(payload) || hasRefresh;
 
   const isPublicRoute =
     pathname === "/" ||
@@ -25,21 +48,15 @@ export async function middleware(request: NextRequest) {
 
   const isAuthRoute = authRoutes.includes(pathname);
 
-  if (isAuthRoute && token) {
-    const payload = await verifyToken(token);
-    if (payload) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
+  if (isAuthRoute && isAuthed) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   if (pathname.startsWith("/dashboard")) {
-    if (!token) {
-      return NextResponse.redirect(new URL("/signin", request.url));
-    }
-    const payload = await verifyToken(token);
-    if (!payload) {
+    if (!isAuthed) {
       const res = NextResponse.redirect(new URL("/signin", request.url));
-      res.cookies.set("token", "", { path: "/", maxAge: 0 });
+      res.cookies.set(ACCESS_COOKIE, "", { path: "/", maxAge: 0 });
+      res.cookies.set(LEGACY_TOKEN_COOKIE, "", { path: "/", maxAge: 0 });
       return res;
     }
   }

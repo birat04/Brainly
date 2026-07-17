@@ -45,15 +45,14 @@ export function normalizeLoginIdentifier(value: string): string {
 
 const TOKEN_KEY = "token";
 
+/** Store access token for Authorization header. HttpOnly cookies are set by the server. */
 export function setAuthToken(token: string) {
   if (typeof window === "undefined") return;
   localStorage.setItem(TOKEN_KEY, token);
-  const maxAge = 60 * 60 * 24 * 7;
-  document.cookie = `${TOKEN_KEY}=${encodeURIComponent(token)}; path=/; max-age=${String(maxAge)}; SameSite=Lax`;
 }
 
 export function clearAuthToken() {
   if (typeof window === "undefined") return;
   localStorage.removeItem(TOKEN_KEY);
-  document.cookie = `${TOKEN_KEY}=; path=/; max-age=0`;
 }
+

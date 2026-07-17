@@ -1,21 +1,23 @@
 import type { NextRequest } from "next/server";
 import { handleRoute, ok } from "@/lib/api/http";
 import { applyAuthCookies } from "@/lib/auth/cookies";
-import { signInUser } from "@/lib/services/auth.service";
-import { signInSchema } from "@/lib/validations";
+import { REFRESH_COOKIE } from "@/lib/auth/constants";
+import { AppError } from "@/lib/errors";
+import { refreshAuthSession } from "@/lib/services/auth.service";
 
 export async function POST(request: NextRequest) {
   return handleRoute(async () => {
-    const parsed = signInSchema.parse(await request.json());
-    const result = await signInUser(parsed.identifier, parsed.password, {
-      userAgent: request.headers.get("user-agent"),
-    });
+    const rawRefresh = request.cookies.get(REFRESH_COOKIE)?.value;
+    if (!rawRefresh) {
+      throw AppError.unauthorized("No refresh session");
+    }
 
+    const result = await refreshAuthSession(rawRefresh, request.headers.get("user-agent"));
     const res = ok({
       token: result.token,
       user: result.user,
       workspaceId: result.workspaceId,
-      message: "Signed in successfully",
+      message: "Session refreshed",
     });
     return applyAuthCookies(res, {
       accessToken: result.token,

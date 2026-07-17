@@ -86,6 +86,12 @@ npm run setup-db
 npm run migrate-workspaces          # or: npm run migrate-workspaces -- --dry-run
 ```
 
+### Auth sessions
+
+Access tokens last **15 minutes** (HttpOnly `access_token` cookie + Bearer).
+Refresh tokens last **30 days** (HttpOnly `refresh_token`, hashed in `sessions`).
+`POST /api/auth/refresh` rotates the refresh token; logout and password change revoke sessions.
+
 ## Deploy
 
 - **Vercel**: rename the project to `cortexly` (or keep the old slug and update DNS). Set `NEXT_PUBLIC_APP_URL` to the production domain.

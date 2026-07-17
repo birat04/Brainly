@@ -23,13 +23,15 @@ export interface JWTPayload extends JosePayload {
   /** Active workspace; may be absent on legacy tokens until next sign-in. */
   workspaceId?: string;
   role?: WorkspaceRole;
+  sessionId?: string;
 }
 
+/** @deprecated Prefer generateAccessToken from lib/auth/session — kept for middleware/legacy. */
 export async function generateToken(payload: JWTPayload): Promise<string> {
   return new SignJWT({ ...payload })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("7d")
+    .setExpirationTime("15m")
     .sign(getSecretKeyBytes());
 }
 

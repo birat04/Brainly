@@ -22,6 +22,7 @@ export const authAPI = {
       success: boolean;
       token: string;
       user: User;
+      workspaceId?: string;
       message?: string;
     };
   },
@@ -37,6 +38,7 @@ export const authAPI = {
         success: boolean;
         token: string;
         user: User;
+        workspaceId?: string;
       };
     } catch (error) {
       const res = error as { response?: { status?: number; data?: { message?: string } } };
@@ -52,15 +54,28 @@ export const authAPI = {
     }
   },
 
+  async refresh(): Promise<{ token: string; user: User; workspaceId?: string } | null> {
+    try {
+      const response = await axiosInstance.post("/api/auth/refresh");
+      return response.data as { token: string; user: User; workspaceId?: string };
+    } catch {
+      return null;
+    }
+  },
+
   async getCurrentUser(): Promise<User> {
     const response = await axiosInstance.get("/api/auth/me");
     return response.data.data as User;
   },
 
-  logout() {
+  async logout() {
+    try {
+      await axiosInstance.post("/api/auth/logout");
+    } catch {
+      // ignore — clear local state anyway
+    }
     if (typeof window === "undefined") return;
     clearAuthToken();
-    window.location.href = "/";
   },
 };
 
@@ -130,11 +145,21 @@ export const statsAPI = {
 };
 
 export const workspacesAPI = {
-  async list(): Promise<{ data: Workspace[]; activeWorkspaceId: string }> {
+  async list(): Promise<{ data: Workspace[]; activeWorkspaceId: string; role?: string }> {
     const response = await axiosInstance.get("/api/workspaces");
     return {
       data: response.data.data as Workspace[],
       activeWorkspaceId: response.data.activeWorkspaceId as string,
+      role: response.data.role as string | undefined,
+    };
+  },
+
+  async switch(workspaceId: string): Promise<{ token: string; workspaceId: string; role: string }> {
+    const response = await axiosInstance.post("/api/workspaces", { workspaceId });
+    return {
+      token: response.data.token as string,
+      workspaceId: response.data.workspaceId as string,
+      role: response.data.role as string,
     };
   },
 };

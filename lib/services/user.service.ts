@@ -1,4 +1,5 @@
 import { comparePassword, hashPassword } from "@/lib/auth";
+import { revokeAllUserSessions } from "@/lib/auth/session";
 import { AppError } from "@/lib/errors";
 import { parseObjectId } from "@/lib/object-id";
 import { usersCollection } from "@/lib/repos/collections";
@@ -53,6 +54,7 @@ export async function changePassword(
 
   const hashed = await hashPassword(newPassword);
   await users.updateOne({ _id: uid }, { $set: { password: hashed, updatedAt: new Date() } });
+  await revokeAllUserSessions(userId);
 }
 
 export async function deleteAccount(userId: string, password: string) {
@@ -65,5 +67,6 @@ export async function deleteAccount(userId: string, password: string) {
   if (!ok) throw AppError.unauthorized("Invalid password");
 
   await deleteUserWorkspacesCascade(uid);
+  await revokeAllUserSessions(userId);
   await users.deleteOne({ _id: uid });
 }

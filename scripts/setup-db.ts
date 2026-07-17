@@ -26,6 +26,12 @@ async function setupDatabase() {
     await memberships.createIndex({ workspaceId: 1 });
     console.log("✓ Memberships indexes");
 
+    const sessions = db.collection("sessions");
+    await sessions.createIndex({ refreshTokenHash: 1 }, { unique: true });
+    await sessions.createIndex({ userId: 1 });
+    await sessions.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+    console.log("✓ Sessions indexes");
+
     const contents = db.collection("contents");
     await contents.createIndex({ userId: 1 });
     await contents.createIndex({ workspaceId: 1, createdAt: -1 });

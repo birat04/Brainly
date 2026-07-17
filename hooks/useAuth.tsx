@@ -20,7 +20,7 @@ interface AuthContextType {
   loading: boolean;
   signin: (data: SignInPayload) => Promise<void>;
   signup: (data: SignUpPayload) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   isAuthenticated: boolean;
 }
@@ -33,15 +33,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   const refreshUser = useCallback(async () => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    if (!token) {
-      setUser(null);
-      return;
-    }
     try {
       const userData = await authAPI.getCurrentUser();
       setUser(userData);
     } catch {
+      const refreshed = await authAPI.refresh();
+      if (refreshed?.token) {
+        setAuthToken(refreshed.token);
+        setUser(refreshed.user);
+        return;
+      }
       clearAuthToken();
       setUser(null);
     }
@@ -50,12 +51,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const run = async () => {
       const token = localStorage.getItem("token");
-      if (!token) {
+      if (token) {
+        setAuthToken(token);
+        await refreshUser();
         setLoading(false);
         return;
       }
-      setAuthToken(token);
-      await refreshUser();
+      // Access may live only in HttpOnly cookie — try refresh / me
+      const refreshed = await authAPI.refresh();
+      if (refreshed?.token) {
+        setAuthToken(refreshed.token);
+        setUser(refreshed.user);
+      }
       setLoading(false);
     };
     void run();
@@ -78,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw error;
       }
     },
-    [refreshUser, router],
+    [router],
   );
 
   const signup = useCallback(
@@ -101,8 +108,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [router],
   );
 
-  const logout = useCallback(() => {
-    clearAuthToken();
+  const logout = useCallback(async () => {
+    await authAPI.logout();
     setUser(null);
     toast.success("Logged out successfully");
     router.push("/");

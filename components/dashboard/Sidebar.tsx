@@ -18,6 +18,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { WorkspaceSwitcher } from "@/components/dashboard/WorkspaceSwitcher";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
@@ -102,6 +103,10 @@ export function Sidebar() {
           >
             {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </Button>
+        </div>
+
+        <div className="border-b border-border/50 px-3 py-3">
+          <WorkspaceSwitcher collapsed={collapsed && isMd} />
         </div>
 
         <nav className="flex-1 space-y-2 overflow-y-auto p-3">

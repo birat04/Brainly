@@ -1,6 +1,5 @@
 # Node modules
 node_modules/
-api/node_modules/
 
 # Next.js
 .next/
@@ -58,3 +57,4 @@ coverage/
 .pnpm-lock.yaml
 .yarn/cache
 .yarn/unplugged
+frontend/

@@ -40,29 +40,6 @@ export interface Content {
   updatedAt: string;
 }
 
-export interface ShareLink {
-  id: string;
-  contentId: string;
-  shareId: string;
-  isActive: boolean;
-  viewCount: number;
-  createdAt: string;
-}
-
-export interface AuthResponse {
-  success: boolean;
-  token: string;
-  user: User;
-  message?: string;
-}
-
-export interface APIResponse<T> {
-  success: boolean;
-  data?: T;
-  message?: string;
-  error?: string;
-}
-
 export interface DashboardStats {
   totalContent: number;
   sharedContent: number;

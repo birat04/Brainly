@@ -100,11 +100,6 @@ export const contentAPI = {
     return response.data.data as Content[];
   },
 
-  async getById(id: string): Promise<Content> {
-    const response = await axiosInstance.get(`/api/content/${id}`);
-    return response.data.data as Content;
-  },
-
   async create(data: {
     title: string;
     description?: string;

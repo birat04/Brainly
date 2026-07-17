@@ -52,8 +52,3 @@ export async function getDatabase(): Promise<Db> {
   const mongoClient = await clientPromise;
   return mongoClient.db("cortexly");
 }
-
-export default function getMongoClientPromise() {
-  clientPromise = clientPromise ?? getClientPromise();
-  return clientPromise;
-}

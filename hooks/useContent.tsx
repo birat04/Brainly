@@ -25,7 +25,6 @@ interface ContentContextValue {
     url?: string;
     body?: string;
   }) => Promise<Content>;
-  updateContentLocal: (content: Content) => void;
   deleteContent: (id: string) => Promise<void>;
   shareContent: (id: string) => Promise<string>;
   toggleShare: (
@@ -78,10 +77,6 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     [],
   );
 
-  const updateContentLocal = useCallback((content: Content) => {
-    setContents((prev) => prev.map((c) => (c.id === content.id ? content : c)));
-  }, []);
-
   const deleteContent = useCallback(async (id: string) => {
     try {
       await contentAPI.delete(id);
@@ -127,7 +122,6 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       loading,
       fetchContents,
       createContent,
-      updateContentLocal,
       deleteContent,
       shareContent,
       toggleShare,
@@ -137,7 +131,6 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       loading,
       fetchContents,
       createContent,
-      updateContentLocal,
       deleteContent,
       shareContent,
       toggleShare,

@@ -20,24 +20,6 @@ export const pageVariants = {
   },
 };
 
-export const cardVariants = {
-  initial: { opacity: 0, scale: 0.95 },
-  animate: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.3,
-    },
-  },
-  hover: {
-    scale: 1.02,
-    y: -4,
-    transition: {
-      duration: 0.2,
-    },
-  },
-};
-
 export const staggerContainer = {
   initial: {},
   animate: {

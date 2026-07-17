@@ -13,9 +13,9 @@ export function Footer() {
         <div>
           <div className="flex items-center gap-2 text-lg font-semibold">
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-sm font-bold text-white">
-              B
+              C
             </span>
-            Brainly
+            Cortexly
           </div>
           <p className="mt-2 text-sm text-muted-foreground">Premium content management & sharing.</p>
         </div>
@@ -28,7 +28,7 @@ export function Footer() {
         </div>
       </div>
       <p className="mx-auto mt-10 max-w-6xl text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Brainly. Crafted for clarity.
+        © {new Date().getFullYear()} Cortexly. Crafted for clarity.
       </p>
     </footer>
   );

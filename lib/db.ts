@@ -7,10 +7,10 @@ let clientPromise: Promise<MongoClient>;
 
 declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined;
-  var __brainlyMongoUriWarned: boolean | undefined;
+  var __cortexlyMongoUriWarned: boolean | undefined;
 }
 
-const DEV_FALLBACK_URI = "mongodb://127.0.0.1:27017/brainly";
+const DEV_FALLBACK_URI = "mongodb://127.0.0.1:27017/cortexly";
 
 function getMongoUri(): string {
   const explicit = process.env.MONGODB_URI?.trim();
@@ -19,10 +19,10 @@ function getMongoUri(): string {
   }
 
   if (process.env.NODE_ENV !== "production") {
-    if (!global.__brainlyMongoUriWarned) {
-      global.__brainlyMongoUriWarned = true;
+    if (!global.__cortexlyMongoUriWarned) {
+      global.__cortexlyMongoUriWarned = true;
       console.warn(
-        `[brainly/db] MONGODB_URI is not set. Using dev fallback: ${DEV_FALLBACK_URI}\n` +
+        `[cortexly/db] MONGODB_URI is not set. Using dev fallback: ${DEV_FALLBACK_URI}\n` +
           "  Add MONGODB_URI to .env.local for Atlas or a custom host (see .env.example).",
       );
     }
@@ -50,7 +50,7 @@ function getClientPromise(): Promise<MongoClient> {
 export async function getDatabase(): Promise<Db> {
   clientPromise = clientPromise ?? getClientPromise();
   const mongoClient = await clientPromise;
-  return mongoClient.db("brainly");
+  return mongoClient.db("cortexly");
 }
 
 export default function getMongoClientPromise() {

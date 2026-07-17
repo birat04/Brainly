@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Brainly — Content management & sharing",
-  description: "Create, manage, and share premium content with unique public links.",
+  title: "Cortexly — Content management & sharing",
+  description: "Create, manage, and share your second brain with unique public links.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

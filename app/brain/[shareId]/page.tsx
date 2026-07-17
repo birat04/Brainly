@@ -56,7 +56,7 @@ export default function PublicBrainPage() {
         <Navbar />
         <div className="mx-auto flex max-w-xl flex-col items-center justify-center gap-6 px-4 py-16 text-center">
           <div>
-            <p className="text-sm font-semibold text-primary">Brainly</p>
+            <p className="text-sm font-semibold text-primary">Cortexly</p>
             <h1 className="mt-3 text-3xl font-semibold">Content unavailable</h1>
             <p className="mt-3 text-muted-foreground">{error}</p>
           </div>

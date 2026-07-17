@@ -36,7 +36,7 @@ type DeleteForm = z.infer<typeof deleteAccountSchema>;
 
 export default function SettingsPage() {
   const { user, refreshUser, logout } = useAuth();
-  const [theme, setTheme] = useLocalStorage<"dark" | "light">("brainly-theme", "dark");
+  const [theme, setTheme] = useLocalStorage<"dark" | "light">("cortexly-theme", "dark");
   const [emailNotif, setEmailNotif] = useState(true);
   const [language, setLanguage] = useState("en");
 
@@ -194,7 +194,7 @@ export default function SettingsPage() {
       <Card className="glass border-border/60">
         <CardHeader>
           <CardTitle>Preferences</CardTitle>
-          <CardDescription>Control how Brainly feels day-to-day.</CardDescription>
+          <CardDescription>Control how Cortexly feels day-to-day.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between gap-4">

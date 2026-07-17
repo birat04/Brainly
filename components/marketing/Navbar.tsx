@@ -27,7 +27,7 @@ export function Navbar() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-8">
         <div className="flex items-center gap-8">
           <Link href="/" className="font-semibold tracking-tight">
-            Brainly
+            Cortexly
           </Link>
           <nav className="hidden items-center gap-5 md:flex">
             <NavLink href="/">Home</NavLink>

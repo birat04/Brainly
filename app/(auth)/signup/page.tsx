@@ -30,7 +30,7 @@ export default function SignUpPage() {
     <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit">
       <Card className="glass border-border/70 shadow-xl">
         <CardHeader>
-          <CardTitle className="text-2xl">Create your Brainly</CardTitle>
+          <CardTitle className="text-2xl">Create your Cortexly</CardTitle>
           <CardDescription>Set up your workspace in under a minute.</CardDescription>
         </CardHeader>
         <CardContent>

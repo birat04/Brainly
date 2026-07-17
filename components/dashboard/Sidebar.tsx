@@ -84,11 +84,11 @@ export function Sidebar() {
         <div className="flex items-center justify-between border-b border-border/50 p-4 md:p-6">
           <Link href="/dashboard" className="flex items-center gap-3" onClick={() => setMobileOpen(false)}>
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-lg font-bold text-white">
-              B
+              C
             </div>
             {!collapsed && (
               <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-xl font-bold text-transparent">
-                Brainly
+                Cortexly
               </span>
             )}
           </Link>

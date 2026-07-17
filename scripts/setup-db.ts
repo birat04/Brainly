@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 
-const uri = process.env.MONGODB_URI || "mongodb://localhost:27017/brainly";
+const uri = process.env.MONGODB_URI || "mongodb://localhost:27017/cortexly";
 
 async function setupDatabase() {
   const client = new MongoClient(uri);
@@ -9,7 +9,7 @@ async function setupDatabase() {
     await client.connect();
     console.log("Connected to MongoDB");
 
-    const db = client.db("brainly");
+    const db = client.db("cortexly");
 
     const users = db.collection("users");
     await users.createIndex({ email: 1 }, { unique: true });

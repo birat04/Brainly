@@ -100,6 +100,15 @@ Set Stripe env vars (see `.env.example`), then point a webhook to
 `customer.subscription.*`, and `invoice.payment_failed`.
 Content creation is blocked when the workspace hits its plan limit.
 
+### Security & search
+
+- Rate limits on auth, content create, and billing (in-memory locally; set
+  `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` for production).
+- Same-origin checks on mutating cookie-authenticated routes.
+- Security headers via `next.config.ts`.
+- Content search uses MongoDB text index (title/tags/description/body) with regex fallback.
+- Health: `GET /api/health` (Mongo ping).
+
 ## Deploy
 
 - **Vercel**: rename the project to `cortexly` (or keep the old slug and update DNS). Set `NEXT_PUBLIC_APP_URL` to the production domain.

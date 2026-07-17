@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Search } from "lucide-react";
+import { FileText, Search } from "lucide-react";
 import { useContent } from "@/hooks/useContent";
 import { pageVariants } from "@/lib/animations";
 import { CreateContentDialog } from "@/components/dashboard/CreateContentDialog";
@@ -17,38 +17,38 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FileText } from "lucide-react";
 
 const PAGE_SIZE = 8;
 
 export default function ContentPage() {
   const { contents, loading, fetchContents, deleteContent } = useContent();
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [type, setType] = useState<string>("all");
   const [page, setPage] = useState(1);
 
   useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    return () => clearTimeout(t);
+  }, [search]);
+
+  useEffect(() => {
     void fetchContents({
       type: type === "all" ? undefined : type,
-      search: search.trim() || undefined,
+      search: debouncedSearch || undefined,
     });
-  }, [fetchContents, type, search]);
-
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return contents.filter((c) => (q ? c.title.toLowerCase().includes(q) : true));
-  }, [contents, search]);
+  }, [fetchContents, type, debouncedSearch]);
 
   const pageItems = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE;
-    return filtered.slice(start, start + PAGE_SIZE);
-  }, [filtered, page]);
+    return contents.slice(start, start + PAGE_SIZE);
+  }, [contents, page]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(contents.length / PAGE_SIZE));
 
   useEffect(() => {
     setPage(1);
-  }, [search, type]);
+  }, [debouncedSearch, type]);
 
   return (
     <motion.div variants={pageVariants} initial="initial" animate="animate" className="space-y-8">
@@ -65,9 +65,10 @@ export default function ContentPage() {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             className="pl-9"
-            placeholder="Search by title..."
+            placeholder="Search title, tags, description, body…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            aria-label="Search content"
           />
         </div>
         <Select value={type} onValueChange={setType}>
@@ -91,7 +92,7 @@ export default function ContentPage() {
             <Skeleton key={i} className="h-12 w-full rounded-lg" />
           ))}
         </div>
-      ) : filtered.length === 0 ? (
+      ) : contents.length === 0 ? (
         <EmptyState
           icon={FileText}
           title="Nothing here yet"
@@ -105,7 +106,7 @@ export default function ContentPage() {
             onRefresh={() =>
               void fetchContents({
                 type: type === "all" ? undefined : type,
-                search: search.trim() || undefined,
+                search: debouncedSearch || undefined,
               })
             }
           />

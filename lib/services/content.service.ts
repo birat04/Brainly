@@ -37,17 +37,39 @@ export async function listContent(params: {
 }) {
   await requireWorkspaceMember(params.userId, params.workspaceId, "member");
   const contents = await contentsCollection();
-  const filter: Filter<ContentDoc> = {
-    $and: [
-      contentScope(params.userId, params.workspaceId),
-      ...(params.type && params.type !== "all" ? [{ type: params.type as ContentType }] : []),
-      ...(params.search
-        ? [{ title: { $regex: escapeRegex(params.search), $options: "i" } }]
-        : []),
-    ],
-  };
+  const scope = contentScope(params.userId, params.workspaceId);
+  const typeClause =
+    params.type && params.type !== "all" ? ({ type: params.type as ContentType } as Filter<ContentDoc>) : null;
+  const q = params.search?.trim();
 
-  const docs = await contents.find(filter).sort({ createdAt: -1 }).toArray();
+  async function runRegexSearch() {
+    const clauses: Filter<ContentDoc>[] = [scope];
+    if (typeClause) clauses.push(typeClause);
+    if (q) {
+      const rx = { $regex: escapeRegex(q), $options: "i" };
+      clauses.push({
+        $or: [{ title: rx }, { description: rx }, { body: rx }, { tags: rx }],
+      } as Filter<ContentDoc>);
+    }
+    return contents.find({ $and: clauses }).sort({ createdAt: -1 }).toArray();
+  }
+
+  let docs;
+  if (q && q.length >= 3) {
+    try {
+      const clauses: Filter<ContentDoc>[] = [scope, { $text: { $search: q } } as Filter<ContentDoc>];
+      if (typeClause) clauses.push(typeClause);
+      docs = await contents
+        .find({ $and: clauses }, { projection: { score: { $meta: "textScore" } } })
+        .sort({ score: { $meta: "textScore" }, createdAt: -1 })
+        .toArray();
+    } catch {
+      docs = await runRegexSearch();
+    }
+  } else {
+    docs = await runRegexSearch();
+  }
+
   return docs.map((d) => mapContent(d as unknown as Record<string, unknown>));
 }
 

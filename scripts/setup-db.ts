@@ -42,6 +42,13 @@ async function setupDatabase() {
     await contents.createIndex({ createdAt: -1 });
     await contents.createIndex({ type: 1 });
     await contents.createIndex({ tags: 1 });
+    await contents.createIndex(
+      { title: "text", description: "text", body: "text", tags: "text" },
+      {
+        name: "contents_text",
+        weights: { title: 10, tags: 5, description: 3, body: 1 },
+      },
+    );
     console.log("✓ Contents indexes");
 
     console.log("\n✅ Database setup complete");

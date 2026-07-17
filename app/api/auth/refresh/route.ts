@@ -4,9 +4,12 @@ import { applyAuthCookies } from "@/lib/auth/cookies";
 import { REFRESH_COOKIE } from "@/lib/auth/constants";
 import { AppError } from "@/lib/errors";
 import { refreshAuthSession } from "@/lib/services/auth.service";
+import { assertSameOrigin, enforceRateLimit } from "@/lib/security/rate-limit";
 
 export async function POST(request: NextRequest) {
   return handleRoute(async () => {
+    assertSameOrigin(request);
+    await enforceRateLimit(request, { prefix: "auth:refresh", limit: 60, windowMs: 60_000 });
     const rawRefresh = request.cookies.get(REFRESH_COOKIE)?.value;
     if (!rawRefresh) {
       throw AppError.unauthorized("No refresh session");

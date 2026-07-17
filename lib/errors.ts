@@ -5,6 +5,7 @@ export type ErrorCode =
   | "VALIDATION_ERROR"
   | "CONFLICT"
   | "BAD_REQUEST"
+  | "RATE_LIMITED"
   | "INTERNAL_ERROR";
 
 export class AppError extends Error {
@@ -42,5 +43,9 @@ export class AppError extends Error {
 
   static validation(message = "Validation error", details?: unknown) {
     return new AppError(400, message, "VALIDATION_ERROR", details);
+  }
+
+  static rateLimited(message = "Too many requests. Please try again later.") {
+    return new AppError(429, message, "RATE_LIMITED");
   }
 }

@@ -16,8 +16,20 @@ async function setupDatabase() {
     await users.createIndex({ username: 1 }, { unique: true });
     console.log("✓ Users indexes");
 
+    const workspaces = db.collection("workspaces");
+    await workspaces.createIndex({ slug: 1 }, { unique: true });
+    await workspaces.createIndex({ ownerId: 1 });
+    console.log("✓ Workspaces indexes");
+
+    const memberships = db.collection("memberships");
+    await memberships.createIndex({ userId: 1, workspaceId: 1 }, { unique: true });
+    await memberships.createIndex({ workspaceId: 1 });
+    console.log("✓ Memberships indexes");
+
     const contents = db.collection("contents");
     await contents.createIndex({ userId: 1 });
+    await contents.createIndex({ workspaceId: 1, createdAt: -1 });
+    await contents.createIndex({ workspaceId: 1, type: 1 });
     await contents.createIndex({ shareId: 1 }, { unique: true, sparse: true });
     await contents.createIndex({ createdAt: -1 });
     await contents.createIndex({ type: 1 });

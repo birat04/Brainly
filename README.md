@@ -70,7 +70,21 @@ Or point `MONGODB_URI` at a cluster and ensure the `cortexly` database exists wi
 - `components/` — UI and feature components
 - `hooks/` — client hooks (`useAuth`, `useContent`, etc.)
 - `lib/` — DB, auth, axios, validations, API helpers
+  - `lib/services/` — business logic (auth, content, user, workspace)
+  - `lib/repos/` — Mongo collection accessors + document types
+  - `lib/api/http.ts` — response envelope helpers
 - `types/` — shared TypeScript types
+- `scripts/` — DB indexes + migrations
+
+### Workspaces
+
+Every user gets a personal workspace on signup/signin. Content is scoped by
+`workspaceId` (with dual-read for legacy rows). Backfill existing data:
+
+```sh
+npm run setup-db
+npm run migrate-workspaces          # or: npm run migrate-workspaces -- --dry-run
+```
 
 ## Deploy
 

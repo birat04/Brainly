@@ -1,72 +1,22 @@
-import { NextResponse } from "next/server";
-import { ZodError } from "zod";
-import { getDatabase } from "@/lib/db";
-import { generateToken, hashPassword } from "@/lib/auth";
+import { created, handleRoute } from "@/lib/api/http";
+import { signUpUser } from "@/lib/services/auth.service";
 import { signUpSchema } from "@/lib/validations";
-import { mapUser } from "@/lib/mappers";
-import { normalizeLoginIdentifier } from "@/lib/utils";
 
 export async function POST(request: Request) {
-  try {
+  return handleRoute(async () => {
     const body = await request.json();
     const validated = signUpSchema.parse(body);
-    const { fullName, password } = validated;
-    const email = normalizeLoginIdentifier(validated.email).toLowerCase();
-    const username = normalizeLoginIdentifier(validated.username);
-
-    const db = await getDatabase();
-    const users = db.collection("users");
-
-    const existing = await users.findOne({ $or: [{ email }, { username }] });
-    if (existing) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: String(existing.email).toLowerCase() === email ? "Email already registered" : "Username already taken",
-        },
-        { status: 400 },
-      );
-    }
-
-    const hashedPassword = await hashPassword(password);
-    const now = new Date();
-    const newUser = {
-      email,
-      username,
-      fullName,
-      password: hashedPassword,
-      avatar: null as string | null,
-      bio: null as string | null,
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    const result = await users.insertOne(newUser);
-    const token = await generateToken({
-      userId: result.insertedId.toString(),
-      email,
-      username,
+    const { token, user, workspaceId } = await signUpUser({
+      email: validated.email,
+      username: validated.username,
+      fullName: validated.fullName,
+      password: validated.password,
     });
-
-    const safe = mapUser({ _id: result.insertedId, ...newUser, password: hashedPassword });
-
-    return NextResponse.json(
-      {
-        success: true,
-        token,
-        user: safe,
-        message: "Account created successfully",
-      },
-      { status: 201 },
-    );
-  } catch (error) {
-    if (error instanceof ZodError) {
-      return NextResponse.json(
-        { success: false, message: "Validation error", errors: error.flatten() },
-        { status: 400 },
-      );
-    }
-    console.error("Signup error", error);
-    return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
-  }
+    return created({
+      token,
+      user,
+      workspaceId,
+      message: "Account created successfully",
+    });
+  });
 }

@@ -1,5 +1,7 @@
+import { randomBytes } from "crypto";
 import { SignJWT, jwtVerify, type JWTPayload as JosePayload } from "jose";
 import bcrypt from "bcryptjs";
+import type { WorkspaceRole } from "@/lib/repos/types";
 
 const encoder = new TextEncoder();
 
@@ -18,6 +20,9 @@ export interface JWTPayload extends JosePayload {
   userId: string;
   email: string;
   username: string;
+  /** Active workspace; may be absent on legacy tokens until next sign-in. */
+  workspaceId?: string;
+  role?: WorkspaceRole;
 }
 
 export async function generateToken(payload: JWTPayload): Promise<string> {
@@ -57,8 +62,5 @@ export async function comparePassword(
 }
 
 export function generateShareId(): string {
-  return (
-    Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15)
-  );
+  return randomBytes(12).toString("base64url");
 }

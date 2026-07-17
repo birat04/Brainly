@@ -1,6 +1,6 @@
 import axiosInstance from "@/lib/axios";
 import { clearAuthToken } from "@/lib/utils";
-import type { Content, DashboardStats, SharedContentPublic, User } from "@/types";
+import type { Content, DashboardStats, SharedContentPublic, User, Workspace } from "@/types";
 
 export interface SignUpPayload {
   email: string;
@@ -126,6 +126,16 @@ export const statsAPI = {
   async get(): Promise<DashboardStats> {
     const response = await axiosInstance.get("/api/stats");
     return response.data.data as DashboardStats;
+  },
+};
+
+export const workspacesAPI = {
+  async list(): Promise<{ data: Workspace[]; activeWorkspaceId: string }> {
+    const response = await axiosInstance.get("/api/workspaces");
+    return {
+      data: response.data.data as Workspace[],
+      activeWorkspaceId: response.data.activeWorkspaceId as string,
+    };
   },
 };
 

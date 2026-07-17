@@ -11,9 +11,22 @@ export interface User {
   updatedAt?: string;
 }
 
+export type WorkspaceRole = "owner" | "admin" | "member";
+
+export interface Workspace {
+  id: string;
+  name: string;
+  slug: string;
+  plan: string;
+  role: WorkspaceRole;
+  createdAt: string;
+}
+
 export interface Content {
   id: string;
   userId: string;
+  workspaceId?: string;
+  createdBy?: string;
   title: string;
   description?: string | null;
   type: ContentType;

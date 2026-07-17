@@ -1,6 +1,16 @@
 import axiosInstance from "@/lib/axios";
 import { clearAuthToken } from "@/lib/utils";
-import type { BillingStatus, Content, DashboardStats, SharedContentPublic, User, Workspace } from "@/types";
+import type {
+  AppNotification,
+  BillingStatus,
+  Content,
+  DashboardStats,
+  SharedContentPublic,
+  User,
+  Workspace,
+  WorkspaceInvite,
+  WorkspaceMember,
+} from "@/types";
 
 export interface SignUpPayload {
   email: string;
@@ -178,6 +188,75 @@ export const billingAPI = {
   async portal(): Promise<{ url: string }> {
     const response = await axiosInstance.post("/api/billing/portal");
     return response.data.data as { url: string };
+  },
+};
+
+export const teamAPI = {
+  async list(): Promise<{
+    members: WorkspaceMember[];
+    invites: WorkspaceInvite[];
+    role: string;
+  }> {
+    const response = await axiosInstance.get("/api/workspaces/members");
+    return response.data.data as {
+      members: WorkspaceMember[];
+      invites: WorkspaceInvite[];
+      role: string;
+    };
+  },
+
+  async invite(email: string, role: "admin" | "member" = "member") {
+    const response = await axiosInstance.post("/api/workspaces/members", { email, role });
+    return response.data.data as WorkspaceInvite & { emailSent: boolean };
+  },
+
+  async revokeInvite(inviteId: string) {
+    await axiosInstance.delete("/api/workspaces/members", { params: { inviteId } });
+  },
+
+  async removeMember(memberUserId: string) {
+    await axiosInstance.delete("/api/workspaces/members", { data: { memberUserId } });
+  },
+
+  async getInvite(token: string) {
+    const response = await axiosInstance.get(`/api/invites/${token}`);
+    return response.data.data as {
+      id: string;
+      email: string;
+      role: string;
+      workspaceId: string;
+      workspaceName: string;
+      expiresAt: string;
+    };
+  },
+
+  async acceptInvite(token: string) {
+    const response = await axiosInstance.post(`/api/invites/${token}`);
+    return response.data.data as {
+      workspaceId: string;
+      workspaceName: string;
+      role: string;
+    };
+  },
+};
+
+export const notificationsAPI = {
+  async list(unreadOnly = false): Promise<{ data: AppNotification[]; unreadCount: number }> {
+    const response = await axiosInstance.get("/api/notifications", {
+      params: unreadOnly ? { unread: "1" } : undefined,
+    });
+    return {
+      data: response.data.data as AppNotification[],
+      unreadCount: response.data.unreadCount as number,
+    };
+  },
+
+  async markRead(id: string) {
+    await axiosInstance.patch("/api/notifications", { id });
+  },
+
+  async markAllRead() {
+    await axiosInstance.patch("/api/notifications", { all: true });
   },
 };
 

@@ -75,7 +75,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setAuthToken(response.token);
         setUser(response.user);
         toast.success("Signed in successfully");
-        router.push("/dashboard");
+        const next =
+          typeof window !== "undefined"
+            ? new URLSearchParams(window.location.search).get("next")
+            : null;
+        router.push(next && next.startsWith("/") ? next : "/dashboard");
       } catch (error: unknown) {
         const message =
           error && typeof error === "object" && "message" in error
@@ -95,7 +99,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setAuthToken(response.token);
         setUser(response.user);
         toast.success("Account created successfully!");
-        router.push("/dashboard");
+        const next =
+          typeof window !== "undefined"
+            ? new URLSearchParams(window.location.search).get("next")
+            : null;
+        router.push(next && next.startsWith("/") ? next : "/dashboard");
       } catch (error: unknown) {
         const message =
           error && typeof error === "object" && "response" in error

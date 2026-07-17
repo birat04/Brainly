@@ -7,6 +7,7 @@ const titles: Record<string, { title: string; showSearch?: boolean }> = {
   "/dashboard": { title: "Dashboard" },
   "/dashboard/content": { title: "Content", showSearch: true },
   "/dashboard/shared": { title: "Shared links" },
+  "/dashboard/team": { title: "Team" },
   "/dashboard/billing": { title: "Billing" },
   "/dashboard/settings": { title: "Settings" },
 };

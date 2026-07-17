@@ -15,6 +15,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CreditCard,
+  Users,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   { icon: FileText, label: "Content", href: "/dashboard/content" },
   { icon: Share2, label: "Shared", href: "/dashboard/shared" },
+  { icon: Users, label: "Team", href: "/dashboard/team" },
   { icon: CreditCard, label: "Billing", href: "/dashboard/billing" },
   { icon: Settings, label: "Settings", href: "/dashboard/settings" },
 ];

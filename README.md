@@ -109,6 +109,12 @@ Content creation is blocked when the workspace hits its plan limit.
 - Content search uses MongoDB text index (title/tags/description/body) with regex fallback.
 - Health: `GET /api/health` (Mongo ping).
 
+### Team & notifications
+
+- Invite members by email (`/dashboard/team`); accept at `/invite/[token]`.
+- In-app notifications (bell in the dashboard header).
+- Optional Resend email for invites (`RESEND_API_KEY`); otherwise the invite link is logged / copied.
+
 ## Deploy
 
 - **Vercel**: rename the project to `cortexly` (or keep the old slug and update DNS). Set `NEXT_PUBLIC_APP_URL` to the production domain.

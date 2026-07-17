@@ -2,6 +2,7 @@ import type { Collection } from "mongodb";
 import { getDatabase } from "@/lib/db";
 import type { ContentDoc, MembershipDoc, UserDoc, WorkspaceDoc } from "@/lib/repos/types";
 import type { SessionDoc } from "@/lib/repos/session-types";
+import type { InviteDoc, NotificationDoc } from "@/lib/repos/collab-types";
 
 export async function usersCollection(): Promise<Collection<UserDoc>> {
   const db = await getDatabase();
@@ -26,4 +27,14 @@ export async function membershipsCollection(): Promise<Collection<MembershipDoc>
 export async function sessionsCollection(): Promise<Collection<SessionDoc>> {
   const db = await getDatabase();
   return db.collection<SessionDoc>("sessions");
+}
+
+export async function invitesCollection(): Promise<Collection<InviteDoc>> {
+  const db = await getDatabase();
+  return db.collection<InviteDoc>("invites");
+}
+
+export async function notificationsCollection(): Promise<Collection<NotificationDoc>> {
+  const db = await getDatabase();
+  return db.collection<NotificationDoc>("notifications");
 }

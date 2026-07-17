@@ -102,3 +102,34 @@ export interface SharedContentPublic extends Omit<Content, "userId"> {
     avatar?: string | null;
   } | null;
 }
+
+export interface WorkspaceMember {
+  userId: string;
+  role: WorkspaceRole;
+  email: string;
+  username: string;
+  fullName: string;
+  avatar?: string | null;
+  joinedAt: string;
+}
+
+export interface WorkspaceInvite {
+  id: string;
+  email: string;
+  role: Exclude<WorkspaceRole, "owner">;
+  status: string;
+  expiresAt: string;
+  createdAt: string;
+  inviteUrl: string;
+}
+
+export interface AppNotification {
+  id: string;
+  type: string;
+  title: string;
+  body: string;
+  href?: string | null;
+  readAt?: string | null;
+  workspaceId?: string | null;
+  createdAt: string;
+}

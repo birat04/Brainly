@@ -34,6 +34,17 @@ async function setupDatabase() {
     await sessions.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
     console.log("✓ Sessions indexes");
 
+    const invites = db.collection("invites");
+    await invites.createIndex({ token: 1 }, { unique: true });
+    await invites.createIndex({ workspaceId: 1, email: 1 });
+    await invites.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+    console.log("✓ Invites indexes");
+
+    const notifications = db.collection("notifications");
+    await notifications.createIndex({ userId: 1, createdAt: -1 });
+    await notifications.createIndex({ userId: 1, readAt: 1 });
+    console.log("✓ Notifications indexes");
+
     const contents = db.collection("contents");
     await contents.createIndex({ userId: 1 });
     await contents.createIndex({ workspaceId: 1, createdAt: -1 });

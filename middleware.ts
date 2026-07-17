@@ -44,7 +44,8 @@ export async function middleware(request: NextRequest) {
   const isPublicRoute =
     pathname === "/" ||
     authRoutes.includes(pathname) ||
-    pathname.startsWith("/brain");
+    pathname.startsWith("/brain") ||
+    pathname.startsWith("/invite");
 
   const isAuthRoute = authRoutes.includes(pathname);
 

@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
@@ -16,14 +18,18 @@ import type { z } from "zod";
 
 type FormValues = z.infer<typeof signUpSchema>;
 
-export default function SignUpPage() {
+function SignUpForm() {
   const { signup } = useAuth();
+  const searchParams = useSearchParams();
+  const emailPrefill = searchParams.get("email") ?? "";
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(signUpSchema),
+    defaultValues: { email: emailPrefill },
   });
 
   return (
@@ -87,5 +93,13 @@ export default function SignUpPage() {
         </CardContent>
       </Card>
     </motion.div>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-muted-foreground">Loading…</div>}>
+      <SignUpForm />
+    </Suspense>
   );
 }

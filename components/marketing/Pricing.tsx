@@ -1,43 +1,40 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { fadeInUp, staggerContainer } from "@/lib/animations";
+import { PLANS } from "@/lib/billing/plans";
+import { useAuth } from "@/hooks/useAuth";
 
-const tiers = [
-  {
-    name: "Free",
-    price: "$0",
-    description: "For individuals getting started.",
-    features: ["Up to 25 items", "Public sharing", "Community support"],
-    cta: "Start for free",
-    href: "/signup",
-    highlighted: false,
-  },
-  {
-    name: "Pro",
-    price: "$19",
-    description: "For creators who live in their workspace.",
-    features: ["Unlimited items", "Advanced analytics", "Priority support", "Custom branding"],
-    cta: "Upgrade to Pro",
-    href: "/signup",
-    highlighted: true,
-  },
-  {
-    name: "Enterprise",
-    price: "Let’s talk",
-    description: "Security, compliance, and dedicated success.",
-    features: ["SSO / SAML", "Dedicated infra", "Audit logs", "24/7 phone support"],
-    cta: "Contact sales",
-    href: "/signup",
-    highlighted: false,
-  },
-];
+const tiers = Object.values(PLANS).map((p) => ({
+  id: p.id,
+  name: p.name,
+  price: p.priceLabel,
+  description: p.description,
+  features: p.features,
+  highlighted: p.highlighted ?? false,
+  cta:
+    p.id === "free"
+      ? "Start for free"
+      : p.id === "pro"
+        ? "Upgrade to Pro"
+        : "Contact sales",
+}));
 
 export function Pricing() {
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  const hrefFor = (planId: string) => {
+    if (planId === "free") return isAuthenticated ? "/dashboard" : "/signup";
+    if (planId === "enterprise") return isAuthenticated ? "/dashboard/billing" : "/signup";
+    return isAuthenticated ? "/dashboard/billing" : "/signup";
+  };
+
   return (
     <section id="pricing" className="px-4 py-20 md:px-8">
       <div className="mx-auto max-w-6xl">
@@ -77,8 +74,22 @@ export function Pricing() {
                   ))}
                 </CardContent>
                 <CardFooter>
-                  <Button asChild className="w-full" variant={tier.highlighted ? "default" : "outline"}>
-                    <Link href={tier.href}>{tier.cta}</Link>
+                  <Button
+                    asChild
+                    className="w-full"
+                    variant={tier.highlighted ? "default" : "outline"}
+                  >
+                    <Link
+                      href={hrefFor(tier.id)}
+                      onClick={(e) => {
+                        if (isAuthenticated && tier.id !== "free") {
+                          e.preventDefault();
+                          router.push("/dashboard/billing");
+                        }
+                      }}
+                    >
+                      {tier.cta}
+                    </Link>
                   </Button>
                 </CardFooter>
               </Card>

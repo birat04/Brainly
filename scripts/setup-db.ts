@@ -19,6 +19,8 @@ async function setupDatabase() {
     const workspaces = db.collection("workspaces");
     await workspaces.createIndex({ slug: 1 }, { unique: true });
     await workspaces.createIndex({ ownerId: 1 });
+    await workspaces.createIndex({ stripeCustomerId: 1 }, { sparse: true });
+    await workspaces.createIndex({ stripeSubscriptionId: 1 }, { sparse: true });
     console.log("✓ Workspaces indexes");
 
     const memberships = db.collection("memberships");

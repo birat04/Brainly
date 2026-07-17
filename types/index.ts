@@ -67,6 +67,32 @@ export interface DashboardStats {
   totalContent: number;
   sharedContent: number;
   totalViews: number;
+  plan?: string;
+  contentLimit?: number | null;
+  pastDue?: boolean;
+}
+
+export interface BillingStatus {
+  configured: boolean;
+  plan: string;
+  planName: string;
+  subscriptionStatus: string | null;
+  currentPeriodEnd: string | null;
+  usage: {
+    content: number;
+    contentLimit: number | null;
+  };
+  canManageBilling: boolean;
+  pastDue: boolean;
+  plans: Array<{
+    id: string;
+    name: string;
+    description: string;
+    priceLabel: string;
+    features: string[];
+    highlighted: boolean;
+    maxContent: number | null;
+  }>;
 }
 
 export interface SharedContentPublic extends Omit<Content, "userId"> {

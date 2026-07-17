@@ -1,6 +1,6 @@
 import axiosInstance from "@/lib/axios";
 import { clearAuthToken } from "@/lib/utils";
-import type { Content, DashboardStats, SharedContentPublic, User, Workspace } from "@/types";
+import type { BillingStatus, Content, DashboardStats, SharedContentPublic, User, Workspace } from "@/types";
 
 export interface SignUpPayload {
   email: string;
@@ -161,6 +161,23 @@ export const workspacesAPI = {
       workspaceId: response.data.workspaceId as string,
       role: response.data.role as string,
     };
+  },
+};
+
+export const billingAPI = {
+  async status(): Promise<BillingStatus> {
+    const response = await axiosInstance.get("/api/billing/status");
+    return response.data.data as BillingStatus;
+  },
+
+  async checkout(plan: "pro" | "enterprise"): Promise<{ url: string }> {
+    const response = await axiosInstance.post("/api/billing/checkout", { plan });
+    return response.data.data as { url: string };
+  },
+
+  async portal(): Promise<{ url: string }> {
+    const response = await axiosInstance.post("/api/billing/portal");
+    return response.data.data as { url: string };
   },
 };
 

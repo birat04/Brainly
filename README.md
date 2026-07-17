@@ -92,6 +92,14 @@ Access tokens last **15 minutes** (HttpOnly `access_token` cookie + Bearer).
 Refresh tokens last **30 days** (HttpOnly `refresh_token`, hashed in `sessions`).
 `POST /api/auth/refresh` rotates the refresh token; logout and password change revoke sessions.
 
+### Billing (Stripe)
+
+Plans: **Free** (25 items), **Pro** (1,000), **Enterprise** (unlimited / sales).
+Set Stripe env vars (see `.env.example`), then point a webhook to
+`/api/billing/webhook` for `checkout.session.completed`,
+`customer.subscription.*`, and `invoice.payment_failed`.
+Content creation is blocked when the workspace hits its plan limit.
+
 ## Deploy
 
 - **Vercel**: rename the project to `cortexly` (or keep the old slug and update DNS). Set `NEXT_PUBLIC_APP_URL` to the production domain.

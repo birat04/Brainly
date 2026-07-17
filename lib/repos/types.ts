@@ -1,5 +1,6 @@
 import type { ObjectId } from "mongodb";
 import type { ContentType } from "@/types";
+import type { PlanId, SubscriptionStatus } from "@/lib/billing/plans";
 
 export type WorkspaceRole = "owner" | "admin" | "member";
 
@@ -20,7 +21,11 @@ export interface WorkspaceDoc {
   name: string;
   slug: string;
   ownerId: ObjectId;
-  plan: "free";
+  plan: PlanId;
+  stripeCustomerId?: string | null;
+  stripeSubscriptionId?: string | null;
+  subscriptionStatus?: SubscriptionStatus;
+  currentPeriodEnd?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }

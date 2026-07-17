@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Activity, Eye, FileText, Share2 } from "lucide-react";
+import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { useContent } from "@/hooks/useContent";
 import { statsAPI } from "@/lib/api";
@@ -14,6 +15,7 @@ import { ContentCard } from "@/components/dashboard/ContentCard";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -78,6 +80,36 @@ export default function DashboardHomePage() {
           </>
         )}
       </div>
+
+      {stats && !statsLoading ? (
+        <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-card/40 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1">
+            <p className="text-sm font-medium">
+              Plan: <span className="capitalize">{stats.plan ?? "free"}</span>
+              {stats.pastDue ? (
+                <span className="ml-2 text-destructive">(payment past due)</span>
+              ) : null}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {stats.totalContent}
+              {stats.contentLimit != null ? ` / ${stats.contentLimit}` : " / ∞"} content items used
+            </p>
+            {stats.contentLimit != null ? (
+              <div className="mt-2 h-1.5 w-full max-w-xs overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-primary"
+                  style={{
+                    width: `${Math.min(100, Math.round((stats.totalContent / stats.contentLimit) * 100))}%`,
+                  }}
+                />
+              </div>
+            ) : null}
+          </div>
+          <Button asChild variant="outline" size="sm">
+            <Link href="/dashboard/billing">Manage billing</Link>
+          </Button>
+        </div>
+      ) : null}
 
       <section className="space-y-4">
         <div className="flex items-center justify-between">

@@ -61,7 +61,8 @@ export async function createContent(params: {
   url?: string;
   body?: string;
 }) {
-  await requireWorkspaceMember(params.userId, params.workspaceId, "member");
+  const { assertCanCreateContent } = await import("@/lib/services/billing.service");
+  await assertCanCreateContent(params.userId, params.workspaceId);
   const contents = await contentsCollection();
   const uid = parseObjectId(params.userId, "userId");
   const wid = parseObjectId(params.workspaceId, "workspaceId");
@@ -235,9 +236,15 @@ export async function getWorkspaceStats(userId: string, workspaceId: string) {
       .toArray(),
   ]);
 
+  const { getBillingStatus } = await import("@/lib/services/billing.service");
+  const billing = await getBillingStatus(userId, workspaceId);
+
   return {
     totalContent,
     sharedContent,
     totalViews: viewsAgg[0]?.total ?? 0,
+    plan: billing.plan,
+    contentLimit: billing.usage.contentLimit,
+    pastDue: billing.pastDue,
   };
 }

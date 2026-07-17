@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { verifyToken } from "@/lib/auth";
 import { verifyAccessToken } from "@/lib/auth/access-token";
 import {
   ACCESS_COOKIE,
@@ -20,10 +19,7 @@ async function readSessionHints(request: NextRequest) {
     : null;
   const hasRefresh = Boolean(request.cookies.get(REFRESH_COOKIE)?.value);
 
-  let payload = null;
-  if (access) {
-    payload = (await verifyAccessToken(access)) ?? (await verifyToken(access));
-  }
+  const payload = access ? await verifyAccessToken(access) : null;
   return { payload, hasRefresh };
 }
 
@@ -60,10 +56,6 @@ export async function middleware(request: NextRequest) {
       res.cookies.set(LEGACY_TOKEN_COOKIE, "", { path: "/", maxAge: 0 });
       return res;
     }
-  }
-
-  if (!isPublicRoute && !pathname.startsWith("/dashboard")) {
-    // reserved for future protected non-dashboard routes
   }
 
   return NextResponse.next();

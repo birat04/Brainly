@@ -1,9 +1,10 @@
 import type { NextRequest } from "next/server";
-import { verifyToken, type JWTPayload } from "@/lib/auth";
-import { verifyAccessToken } from "@/lib/auth/access-token";
+import { verifyToken, type JWTPayload } from "@/lib/auth/access-token";
 import { ACCESS_COOKIE, LEGACY_TOKEN_COOKIE } from "@/lib/auth/constants";
 import { AppError } from "@/lib/errors";
 import { ensurePersonalWorkspace } from "@/lib/services/workspace.service";
+
+export type { JWTPayload };
 
 function readAccessCookie(request: NextRequest): string | null {
   const access = request.cookies.get(ACCESS_COOKIE)?.value;
@@ -20,7 +21,7 @@ export async function getUserFromRequest(request: NextRequest): Promise<JWTPaylo
   if (!token) return null;
 
   const decoded = token.includes("%") ? decodeURIComponent(token) : token;
-  return (await verifyAccessToken(decoded)) ?? (await verifyToken(decoded));
+  return verifyToken(decoded);
 }
 
 export async function requireAuth(request: NextRequest): Promise<JWTPayload> {

@@ -1,7 +1,9 @@
 import { randomBytes } from "crypto";
-import { SignJWT, jwtVerify, type JWTPayload as JosePayload } from "jose";
+import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
-import type { WorkspaceRole } from "@/lib/repos/types";
+import type { JWTPayload } from "@/lib/auth/types";
+
+export type { JWTPayload, WorkspaceRole } from "@/lib/auth/types";
 
 const encoder = new TextEncoder();
 
@@ -16,17 +18,7 @@ function getSecretKeyBytes(): Uint8Array {
   return encoder.encode(secret);
 }
 
-export interface JWTPayload extends JosePayload {
-  userId: string;
-  email: string;
-  username: string;
-  /** Active workspace; may be absent on legacy tokens until next sign-in. */
-  workspaceId?: string;
-  role?: WorkspaceRole;
-  sessionId?: string;
-}
-
-/** @deprecated Prefer generateAccessToken from lib/auth/session — kept for middleware/legacy. */
+/** @deprecated Prefer generateAccessToken from lib/auth/access-token */
 export async function generateToken(payload: JWTPayload): Promise<string> {
   return new SignJWT({ ...payload })
     .setProtectedHeader({ alg: "HS256" })

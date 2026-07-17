@@ -1,7 +1,8 @@
 import { SignJWT, jwtVerify } from "jose";
-import type { WorkspaceRole } from "@/lib/repos/types";
-import type { JWTPayload } from "@/lib/auth";
+import type { JWTPayload, WorkspaceRole } from "@/lib/auth/types";
 import { ACCESS_MAX_AGE } from "@/lib/auth/constants";
+
+export type { JWTPayload, WorkspaceRole };
 
 const encoder = new TextEncoder();
 
@@ -39,3 +40,6 @@ export async function verifyAccessToken(token: string): Promise<JWTPayload | nul
     return null;
   }
 }
+
+/** Alias for legacy call sites — same verifier as access tokens. */
+export const verifyToken = verifyAccessToken;

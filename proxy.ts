@@ -23,7 +23,7 @@ async function readSessionHints(request: NextRequest) {
   return { payload, hasRefresh };
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (

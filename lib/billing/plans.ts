@@ -28,7 +28,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
     name: "Free",
     description: "For individuals getting started.",
     maxContent: 25,
-    priceLabel: "$0",
+    priceLabel: "₹0",
     features: ["Up to 25 items", "Public sharing", "Community support"],
   },
   pro: {
@@ -36,7 +36,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
     name: "Pro",
     description: "For creators who live in their workspace.",
     maxContent: 1000,
-    priceLabel: "$19",
+    priceLabel: "₹499",
     features: ["Up to 1,000 items", "Advanced analytics", "Priority support", "Custom branding"],
     highlighted: true,
   },
@@ -45,10 +45,13 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
     name: "Enterprise",
     description: "Security, compliance, and dedicated success.",
     maxContent: null,
-    priceLabel: "Let’s talk",
+    priceLabel: "Custom",
     features: ["Unlimited items", "SSO / SAML", "Audit logs", "24/7 phone support"],
   },
 };
+
+/** Display currency for Stripe products (create Price objects in INR in the Dashboard). */
+export const BILLING_CURRENCY = "inr" as const;
 
 export function getPlan(planId: PlanId | string | undefined): PlanDefinition {
   if (planId && planId in PLANS) return PLANS[planId as PlanId];

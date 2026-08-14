@@ -37,8 +37,28 @@ function getClientPromise(): Promise<MongoClient> {
 
   if (process.env.NODE_ENV === "development") {
     if (!global._mongoClientPromise) {
-      client = new MongoClient(uri, options);
-      global._mongoClientPromise = client.connect();
+      const connectWithFallback = async (): Promise<MongoClient> => {
+        try {
+          client = new MongoClient(uri, options);
+          await client.connect();
+          return client;
+        } catch (error) {
+          if (uri === DEV_FALLBACK_URI) {
+            throw error;
+          }
+
+          console.warn(
+            `[cortexly/db] Mongo connection failed for configured URI. Falling back to local dev DB: ${DEV_FALLBACK_URI}`,
+            error instanceof Error ? error.message : error,
+          );
+
+          client = new MongoClient(DEV_FALLBACK_URI, options);
+          await client.connect();
+          return client;
+        }
+      };
+
+      global._mongoClientPromise = connectWithFallback();
     }
     return global._mongoClientPromise;
   }
